@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import useSWR from 'swr';
 import { Search, Star, Phone, Copy, Check, Info, X, MapPin, LocateFixed, Navigation } from 'lucide-react';
@@ -55,7 +55,7 @@ const DISTRICTS = [
   'Nepalgunj',
 ];
 
-export default function PulseLinePage() {
+function PulseLineContent() {
   const searchParams = useSearchParams();
   const isSOSMode = searchParams.get('mode') === 'sos';
 
@@ -521,6 +521,18 @@ export default function PulseLinePage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function PulseLinePage() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <div className="animate-spin rounded-full h-8 w-8 border-2 border-[#D72638] border-t-transparent" />
+      </div>
+    }>
+      <PulseLineContent />
+    </Suspense>
   );
 }
 

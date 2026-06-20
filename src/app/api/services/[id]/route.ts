@@ -1,8 +1,11 @@
 import { NextResponse } from 'next/server';
 import db from '@/lib/db';
 
-export async function PATCH(request: Request, { params }: { params: { id: string } }) {
+type RouteParams = { params: Promise<{ id: string }> };
+
+export async function PATCH(request: Request, { params }: RouteParams) {
   try {
+    const { id } = await params;
     const body = await request.json();
     const {
       name,
@@ -24,18 +27,19 @@ export async function PATCH(request: Request, { params }: { params: { id: string
           latitude = COALESCE(?, latitude),
           longitude = COALESCE(?, longitude)
       WHERE id = ?
-    `).run(name, type, phone, location, district, latitude, longitude, params.id);
+    `).run(name, type, phone, location, district, latitude, longitude, id);
 
-    const updatedService = await db.prepare('SELECT * FROM nearby_services WHERE id = ?').get(params.id);
+    const updatedService = await db.prepare('SELECT * FROM nearby_services WHERE id = ?').get(id);
     return NextResponse.json(updatedService);
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
 
-export async function DELETE(request: Request, { params }: { params: { id: string } }) {
+export async function DELETE(request: Request, { params }: RouteParams) {
   try {
-    await db.prepare('DELETE FROM nearby_services WHERE id = ?').run(params.id);
+    const { id } = await params;
+    await db.prepare('DELETE FROM nearby_services WHERE id = ?').run(id);
     return NextResponse.json({ success: true });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
