@@ -1,0 +1,122 @@
+[
+  {
+    "name": "Nepal Police (Emergency)",
+    "number": "100",
+    "category": "Police",
+    "description": "General police assistance and emergency reporting.",
+    "district": "All",
+    "location_text": "Nationwide",
+    "latitude": null,
+    "longitude": null
+  },
+  {
+    "name": "Fire Brigade (Kathmandu)",
+    "number": "101",
+    "category": "Fire Brigade",
+    "description": "Kathmandu central fire station for immediate fire emergencies.",
+    "district": "Kathmandu",
+    "location_text": "Kathmandu Metropolitan City",
+    "latitude": 27.7172,
+    "longitude": 85.3240
+  },
+  {
+    "name": "Nepal Red Cross Society (Ambulance)",
+    "number": "102",
+    "category": "Medical",
+    "description": "Ambulance service and emergency medical transport.",
+    "district": "All",
+    "location_text": "Nationwide",
+    "latitude": null,
+    "longitude": null
+  },
+  {
+    "name": "Traffic Police (Emergency)",
+    "number": "103",
+    "category": "Police",
+    "description": "Reporting road accidents, traffic jams, and transit violations.",
+    "district": "All",
+    "location_text": "Nationwide",
+    "latitude": null,
+    "longitude": null
+  },
+  {
+    "name": "Child Helpline Nepal",
+    "number": "104",
+    "category": "Women & Child Safety",
+    "description": "Helpline for children in risk, domestic violence, or abuse cases.",
+    "district": "All",
+    "location_text": "Nationwide",
+    "latitude": null,
+    "longitude": null
+  },
+  {
+    "name": "National Emergency Operation Center (NEOC)",
+    "number": "1149",
+    "category": "Disaster Management",
+    "description": "Disaster monitoring, earthquake coordination, and flood relief updates.",
+    "district": "Kathmandu",
+    "location_text": "Singha Durbar, Kathmandu",
+    "latitude": 27.6979,
+    "longitude": 85.3200
+  },
+  {
+    "name": "Nepal Electricity Authority (NEA)",
+    "number": "1150",
+    "category": "Utility",
+    "description": "Reporting power outages, electrical faults, and live wire dangers.",
+    "district": "All",
+    "location_text": "Nationwide",
+    "latitude": null,
+    "longitude": null
+  },
+  {
+    "name": "Mental Health Helpline Nepal",
+    "number": "1166",
+    "category": "Mental Health",
+    "description": "24/7 free mental health support, crisis counselling, and suicide prevention.",
+    "district": "All",
+    "location_text": "Nationwide",
+    "latitude": null,
+    "longitude": null
+  },
+  {
+    "name": "Kathmandu Upatyaka Khanepani Limited (KUKL)",
+    "number": "1113",
+    "category": "Utility",
+    "description": "Water supply issues, pipeline leaks, and emergency distribution.",
+    "district": "Kathmandu",
+    "location_text": "Kathmandu Valley",
+    "latitude": 27.7000,
+    "longitude": 85.3100
+  },
+  {
+    "name": "National Human Rights Commission (NHRC)",
+    "number": "1208",
+    "category": "Women & Child Safety",
+    "description": "Reporting human rights violations and discrimination.",
+    "district": "Kathmandu",
+    "location_text": "Kathmandu",
+    "latitude": 27.7050,
+    "longitude": 85.3150
+  },
+  {
+    "name": "Patan Hospital (Emergency Department)",
+    "number": "01-5522295",
+    "category": "Medical",
+    "description": "Emergency services, trauma care, and clinical facilities.",
+    "district": "Lalitpur",
+    "location_text": "Patan, Lalitpur",
+    "latitude": 27.6720,
+    "longitude": 85.3180
+  },
+  {
+    "name": "Nepal Red Cross Blood Bank",
+    "number": "01-4272718",
+    "category": "Medical",
+    "description": "Emergency blood supply, donor coordination, and inventory checking.",
+    "district": "Kathmandu",
+    "location_text": "Kathmandu",
+    "latitude": 27.7080,
+    "longitude": 85.3150
+  }
+]

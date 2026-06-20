@@ -1,0 +1,69 @@
+@import "tailwindcss";
+
+:root {
+  --bg-base: #F7F8FA;
+  --bg-card: #FFFFFF;
+  --bg-nav: #FFFFFF;
+  --accent-primary: #D72638;
+  --accent-secondary: #1B4FD8;
+  --text-primary: #111318;
+  --text-secondary: #5A6072;
+  --text-muted: #9AA0AD;
+  --border: #E4E7EC;
+  
+  --success: #16A34A;
+  --warning: #D97706;
+  --error: #DC2626;
+
+  --status-submitted-bg: #FEF3C7;
+  --status-submitted-fg: #D97706;
+  --status-review-bg: #DBEAFE;
+  --status-review-fg: #1B4FD8;
+  --status-resolved-bg: #DCFCE7;
+  --status-resolved-fg: #16A34A;
+  --status-rejected-bg: #FEE2E2;
+  --status-rejected-fg: #DC2626;
+}
+
+body {
+  background-color: var(--bg-base);
+  color: var(--text-primary);
+  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+.font-mono {
+  font-family: var(--font-inter-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+/* SOS pulse ring animation */
+@keyframes pulse-ring {
+  0% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  50% {
+    opacity: 0.3;
+  }
+  100% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}
+
+.sos-pulse-ring-1 {
+  animation: pulse-ring 2.5s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+}
+
+.sos-pulse-ring-2 {
+  animation: pulse-ring 2.5s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+  animation-delay: 1.25s;
+}
+
+/* Horizontal scrollbar hiding */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+

@@ -1,0 +1,282 @@
+---
+
+# ResQ Nepal — Master Prompt
+
+You are building a web application called **ResQ Nepal** from scratch. Read every instruction completely before writing a single line of code.
+
+---
+
+## Step 0 — Read Skills First
+
+Before writing any code, read the following skill files completely:
+
+- `.agent/skills/ui-ux-pro-max/SKILL.md`
+- `.agent/skills/frontend-design/SKILL.md`
+
+Apply everything in those skill files to every page you build. Do not skip this step.
+
+---
+
+## Project Identity — Force Overwrite Everywhere
+
+- App name: **ResQ Nepal** — hardcode this in every page title, navbar, footer, meta tags, and browser tab. No other name appears anywhere.
+- Tagline: **"Your community emergency platform for Nepal"**
+- Logo logic: Create a folder at `/public/images/`. Inside `src/components/Logo.tsx` write logic that checks if `/public/images/logo.jpeg` exists. If it does, render it as an `<img>` tag sized at 36px height. If it does not exist, render the emoji 🆘 with the bold text **ResQ Nepal** beside it. This swap must be fully automatic — when `logo.jpeg` is dropped into `/public/images/` the logo updates with zero code changes. Use this `Logo.tsx` component in the navbar, mobile bottom nav, admin sidebar, admin login page, and footer. Never hardcode a logo anywhere else.
+
+---
+
+## Tech Stack
+
+- Next.js 14 (App Router)
+- Tailwind CSS
+- Shadcn UI
+- SQLite via `better-sqlite3`
+- SWR for client-side data fetching
+- No other external paid services
+- Runs fully offline except `/safeshield`
+
+---
+
+## Design System — Apply Globally
+
+Apply these tokens in `globals.css` and use them consistently across every single component and page:
+
+```css
+:root {
+  --bg-base: #F7F8FA;
+  --bg-card: #FFFFFF;
+  --bg-nav: #FFFFFF;
+  --accent-primary: #D72638;
+  --accent-secondary: #1B4FD8;
+  --text-primary: #111318;
+  --text-secondary: #5A6072;
+  --text-muted: #9AA0AD;
+  --border: #E4E7EC;
+  --success: #16A34A;
+  --warning: #D97706;
+  --error: #DC2626;
+  --radius-card: 12px;
+  --radius-btn: 8px;
+  --shadow-card: 0 1px 4px rgba(0,0,0,0.06);
+}
+```
+
+**Typography:** Import Inter from Google Fonts. Use Inter everywhere. Reference numbers, status codes, and counts use `font-variant-numeric: tabular-nums` and `font-family: 'Inter Mono'`.
+
+**Spacing:** Use only these values: 4 / 8 / 12 / 16 / 24 / 32 / 48 / 64px. No arbitrary values.
+
+**Design direction:** Calm authority. Minimalist. Clean whitespace. Inspired by the Antigravity homepage — bold but simple typography, clear hierarchy, zero clutter. Every element earns its place or gets removed.
+
+---
+
+## Signature Element — SOS Pulse Ring
+
+This is the only animation on the entire platform. Apply it only on the Home page SOS button:
+
+```css
+@keyframes pulse-ring {
+  0% { transform: scale(1); opacity: 0.6; }
+  100% { transform: scale(1.8); opacity: 0; }
+}
+.sos-pulse::before,
+.sos-pulse::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  background: #D72638;
+  animation: pulse-ring 2s ease-out infinite;
+}
+.sos-pulse::after { animation-delay: 0.6s; }
+```
+
+The SOS button is circular, 96px diameter, `#D72638` background, white bold text, centered on the hero. Do not animate anything else anywhere.
+
+---
+
+## Layout Rules
+
+- Max content width: 1080px centered
+- Body background: `--bg-base` on every page
+- All cards: white, `--border` border, `--radius-card`, `--shadow-card`
+- Card padding: 20px
+- Section spacing: 48px between major sections
+- Mobile first — single column below 768px
+- Navbar height: 56px desktop
+- Bottom nav height: 64px mobile fixed to bottom
+- No full-bleed colored sections
+- No gradients except SOS button hover
+- No dark mode
+- No background images or illustrations
+- No decorative dividers
+
+---
+
+## Component Rules
+
+**Navbar (desktop):** White background, 1px bottom border `--border`. Left: `Logo.tsx`. Center: nav links in `--text-secondary`, active link `--text-primary` with 2px `--accent-primary` underline. Right: notification bell with unread count badge.
+
+**Bottom Nav (mobile):** White, 1px top border. Icons: Home, PulseLine, RapidDispatch, VoiceBox, More (sheet for rest). Active icon `--accent-primary`, inactive `--text-muted`.
+
+**Buttons:** Primary = `--accent-primary` bg, white text, `--radius-btn`, 40px height, sentence case. Secondary = white bg, `--border` border. Destructive = `--error` bg. All buttons show spinner on loading state.
+
+**Inputs:** White bg, `--border` border, `--radius-btn`, 40px height. Focus = 2px `--accent-secondary` outline. Error state = `--error` border with message below.
+
+**Status badges:** Pill shape, Inter Mono, 12px. Submitted = `#FEF3C7` bg `#D97706` text. Under Review = `#DBEAFE` bg `#1B4FD8` text. Resolved = `#DCFCE7` bg `#16A34A` text. Rejected = `#FEE2E2` bg `#DC2626` text.
+
+**Cards:** White bg, `--border` border, `--radius-card`, `--shadow-card`. Hover = `translateY(-1px)` only, no color change.
+
+**Toasts:** Bottom-right desktop, bottom-center mobile. 320px wide, `--radius-card`. Success = 4px left border `--success`. Error = 4px left border `--error`. Auto-dismiss 4 seconds.
+
+**Tables (admin):** No zebra striping. `--border` row dividers. Paginated 10 rows per page. Row hover = `--bg-base` tint.
+
+**Modals:** Centered, max 480px wide, white bg, `--radius-card`, backdrop `rgba(0,0,0,0.4)`. Close X top-right.
+
+---
+
+## Database
+
+Use SQLite via `better-sqlite3`. Database file at `src/db/database.sqlite`. On first run auto-create all tables if they do not exist:
+
+`contacts` — id, name, number, category, description
+`incident_reports` — id, type, location, description, severity, status, created_at, reference_number, photo_path
+`complaints` — id, subject, category, description, status, complaint_id, admin_response, created_at
+`discussion_posts` — id, content, category, is_anonymous, upvotes, created_at
+`discussion_replies` — id, post_id, content, created_at
+`donors` — id, type, name, contact, blood_group, city, organs, items, quantity, pickup_location, status, created_at
+`money_campaigns` — id, title, description, target, raised, end_date, is_active
+`money_donations` — id, campaign_id, donor_name, amount, message, created_at
+`info_links` — id, name, url, description, category
+`documents` — id, name, file_path, category, file_size
+`insurance_companies` — id, name, logo_path, description, plans, affiliate_link, is_active
+`charity_campaigns` — id, title, description, target, raised, end_date, is_active, is_archived
+`charity_donations` — id, campaign_id, donor_name, amount, message, created_at
+`notices` — id, title, content, is_pinned, created_at
+`notifications` — id, title, message, type, is_read, created_at
+`admin_session` — id, username, password
+
+On first run seed `contacts` from `/public/data/contacts.json` if table is empty. Seed `info_links` from `/public/data/links.json` if table is empty. Insert default admin: username `admin` password `resqnepal123`.
+
+---
+
+## API Routes
+
+Build all under `src/app/api/`:
+
+```
+GET POST          /api/contacts
+PATCH DELETE      /api/contacts/[id]
+GET POST          /api/reports
+PATCH             /api/reports/[id]
+GET POST          /api/complaints
+PATCH             /api/complaints/[id]
+GET POST          /api/posts
+POST              /api/posts/[id]/reply
+PATCH             /api/posts/[id]/upvote
+GET POST          /api/donors
+PATCH             /api/donors/[id]
+GET POST          /api/campaigns
+POST              /api/campaigns/[id]/donate
+GET POST          /api/links
+GET POST          /api/documents
+GET POST          /api/insurance
+PATCH DELETE      /api/insurance/[id]
+GET POST          /api/charity
+POST              /api/charity/[id]/donate
+GET POST          /api/notices
+PATCH DELETE      /api/notices/[id]
+GET POST          /api/notifications
+PATCH             /api/notifications/[id]
+POST              /api/admin/login
+POST              /api/admin/logout
+```
+
+---
+
+## Pages
+
+### User Pages (No Login Required)
+
+**`/` Home:** Logo.tsx centered, tagline, SOS pulse ring button linking to `/rapiddispatch`, 4-column feature card grid (desktop) / 2-column (mobile), Notice Board from `/api/notices` pinned only, Notifications widget showing 3 latest unread.
+
+**`/pulseline`:** Sticky search bar, horizontal category filter pills, contacts from `/api/contacts`, list cards with Copy + Call Now buttons, Shadcn Dialog on click, Favourites via localStorage.
+
+**`/rapiddispatch`:** Four 2x2 action cards with accordion forms. Report Accident (Location, Type, People, Description, Photo), Request Vehicle (Location, Vehicle Type, Urgency, Contact), Report Natural Hazard (Hazard Type, Location, Severity, Description, Photo), Report Other (Title, Location, Description, Photo). On submit: POST to `/api/reports`, POST to `/api/notifications`, show reference number RQ-YYYYMMDD-XXXX in Inter Mono. My Reports lookup by reference number below.
+
+**`/voicebox`:** Three Shadcn Tabs. Complaint Box: form POST `/api/complaints`, show complaint ID. Discussion Board: post form POST `/api/posts`, feed with upvotes + replies + category filter. My Submissions: complaint ID lookup.
+
+**`/aiddrop`:** Five Shadcn Tabs. Blood: form + searchable registry. Organs: form + registry. Food & Clothes: listing form + public board. Money: campaigns with progress bars + donation form. My Listings: session list.
+
+**`/safelink`:** Two Shadcn Tabs. Info Links: from `/api/links`, search + filter + Visit buttons. Documents: from `/api/documents`, search + filter + Download buttons to `/public/docs/`.
+
+**`/safeshield`:** `navigator.onLine` detection. Offline = full red banner, content disabled. Online = companies from `/api/insurance` with Shadcn Accordion plans + Get Insured affiliate buttons. Disclaimer at bottom.
+
+**`/charity`:** Active campaigns from `/api/charity`, progress bars, Top Donors list, donation form per campaign, Past Campaigns collapsible section at bottom.
+
+---
+
+### Admin Pages (Login Required)
+
+Protect all `/admin/*` routes — redirect to `/admin` if no valid localStorage session.
+
+**`/admin`:** Login form, validate against `admin_session`, set localStorage token, redirect to dashboard on success.
+
+**`/admin/dashboard`:** Stats cards (Total Reports, Open Complaints, Active Donors, Charity Fund, Insurance Listings), Recent Activity Feed (latest 10 across all tables), Quick Actions (Add Contact, Post Notice, Upload Document), Notifications panel, Logout button.
+
+**`/admin/pulseline`:** Paginated table of contacts. Add / Edit / Delete with form fields: Name, Number, Category, Description.
+
+**`/admin/rapiddispatch`:** Paginated table of reports filtered by type/date/status. Update status + add internal notes.
+
+**`/admin/voicebox`:** Complaints table with status update + admin response. Discussion posts with hide/pin/delete moderation.
+
+**`/admin/aiddrop`:** Four tabs. Blood Donors / Organ Donors / Food & Clothes — paginated tables with Approve/Reject/Delete. Money Campaigns — from `money_campaigns` with Create/Close/View Donors modal.
+
+**`/admin/safelink`:** Two tabs. Info Links CRUD (Name, URL, Description, Category). Documents — upload to `/public/docs/`, insert record with file size.
+
+**`/admin/safeshield`:** Table of insurance companies. Add/Edit/Delete/Toggle Active. Form: Name, Description, Plans JSON, Affiliate Link, Logo Upload to `/public/images/`.
+
+**`/admin/charity`:** Table of charity campaigns. Create/Edit/Close/Archive. View Donors modal per campaign. Progress bar per row.
+
+**`/admin/notices`:** Table of notices. Add/Edit/Delete/Toggle Pin. Pinned rows show 📌 badge.
+
+---
+
+## Notification Bell — Global
+
+In navbar: bell icon fetching unread count from `/api/notifications?unread=true`. Red badge if count greater than zero. Click opens Shadcn Popover listing all notifications newest first. Mark as read on click. Mark All as Read button.
+
+---
+
+## AGENT_STATE.md — Create This File at Project Root
+
+At the end of every work session update this file before stopping. At the start of every new session read this file first before any code. Structure it exactly like this:
+
+```markdown
+# AGENT_STATE.md
+## LAST_COMPLETED
+(what was just finished)
+## NEXT_TASK
+(exactly what to build next, with full detail)
+## COMPLETED_TASKS
+(running checklist)
+## BLOCKED_BY
+(anything blocking progress or NONE)
+## NOTES
+(anything the next agent must know)
+```
+
+---
+
+## Final Rules
+
+- Every page `<title>`: `PageName — ResQ Nepal`
+- All dates in Nepal Standard Time UTC+5:45
+- Every form has loading, success, and error states
+- Keep every page simple — this is a demo not a production app
+- Do not install packages not listed here without checking `package.json` first
+- Do not add features not listed in this prompt
+- After completing each task update `AGENT_STATE.md` immediately
+
+---
+
+*ResQ Nepal — Master Prompt v1.0*

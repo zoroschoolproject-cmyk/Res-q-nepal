@@ -1,0 +1,337 @@
+## Phases Overview
+
+**BEFORE deployment** — set up database. Vercel can't use SQLite (it's file-based, read-only on serverless). You need to migrate to **Neon** (free PostgreSQL) or **Turso** (free SQLite-compatible). Do this before final deployment.
+
+---
+
+## All Phases
+
+```
+PHASE 1 — Auth Restructure
+PHASE 2 — Database Migration (SQLite → Neon/Turso)
+PHASE 3 — Admin Panel Fix & Document Upload
+PHASE 4 — User Login System
+PHASE 5 — Advisor Section (Revenue Model)
+PHASE 6 — Content & Navigation Fixes
+PHASE 7 — Mobile Navigation Fix
+PHASE 8 — Premium Document Access
+PHASE 9 — Final Polish & Deploy
+```
+
+---
+
+Here is your master prompt:
+
+---
+
+# ResQ Nepal — Final Refinement Master Prompt
+
+**TAG: FINAL-REFINEMENT-V2**
+
+Read `README_NEXT_AGENT.md` and `AGENT_STATE.md` completely before touching any code. Search for the tag `FINAL-REFINEMENT-V2` in both files to find your exact starting point. Do not redo any phase marked ✅ DONE. Read the UI/UX skill files before touching any component.
+
+---
+
+## Golden Rules
+- Never break working features
+- Maintain all existing UI/UX tokens and design system
+- Read skill files before editing any component
+- Update `AGENT_STATE.md` after every phase with ✅ or ❌
+- Do not run build commands unless explicitly stated in the phase
+- One phase at a time — fully complete it before starting next
+
+---
+
+## PHASE 1 — Auth Restructure
+**TAG: FINAL-REFINEMENT-V2-PHASE-1**
+
+These pages must be fully public — no login required ever:
+- `/` Home
+- `/pulseline`
+- `/rapiddispatch`
+- `/safelink` (Info Links + Downloadable Docs tabs only)
+
+These pages require user login:
+- `/voicebox`
+- `/aiddrop`
+- `/safeshield`
+- `/charity`
+- `/advisor` (new — Phase 5)
+
+Admin panel at `/admin/*` requires separate admin login.
+
+Remove any existing middleware or route protection blocking public pages. Add route protection only to the pages listed above that require user login. If a logged-out user tries to access a protected page, redirect to `/login` with a message: "Please log in to access this feature."
+
+Update `AGENT_STATE.md` on completion:
+```
+✅ FINAL-REFINEMENT-V2-PHASE-1 DONE
+```
+
+---
+
+## PHASE 2 — Database Migration
+**TAG: FINAL-REFINEMENT-V2-PHASE-2**
+
+SQLite is read-only on Vercel. Migrate to **Turso** (free, SQLite-compatible, works on Vercel).
+
+Steps:
+1. Install `@libsql/client`
+2. Replace all `better-sqlite3` imports with `@libsql/client`
+3. Update all database calls from synchronous to async/await
+4. Update `.env` with:
+```
+TURSO_DATABASE_URL=
+TURSO_AUTH_TOKEN=
+```
+5. Add `.env.example` with empty values so next agent knows what's needed
+6. Keep all existing table schemas identical — do not change column names or types
+7. Seed script must still work — move seed logic to a `/api/seed` route callable once after deployment
+
+Update `AGENT_STATE.md` on completion:
+```
+✅ FINAL-REFINEMENT-V2-PHASE-2 DONE
+```
+
+---
+
+## PHASE 3 — Admin Panel Fix
+**TAG: FINAL-REFINEMENT-V2-PHASE-3**
+
+Admin credentials — hardcode these:
+- Username: `Titans`
+- Password: `ASM`
+
+Fix admin login to use these exact credentials. Update the `admin_session` table seed accordingly.
+
+Admin panel must have these management modules all working:
+- PulseLine Management — Add / Edit / Remove SOS numbers
+- SafeLink Management — Upload documents, add/remove info links, set premium flag on documents
+- RapidDispatch Management — View and update reports
+- VoiceBox Management — Moderate complaints and posts
+- AidDrop Management — Approve donors and manage campaigns
+- Charity Management — Create and close campaigns
+- Advisor Management — Add/remove advisors, set advisor fee (Phase 5 prep)
+- Notices Management — Post/pin/remove notices
+
+Make sure `/admin` login page is accessible and visible. If it was broken or hidden fix it now.
+
+Update `AGENT_STATE.md` on completion:
+```
+✅ FINAL-REFINEMENT-V2-PHASE-3 DONE
+```
+
+---
+
+## PHASE 4 — User Login System
+**TAG: FINAL-REFINEMENT-V2-PHASE-4**
+
+Create a `/login` page and `/register` page for regular users.
+
+Seed these two default users in the database:
+- Username: `user1` Password: `asm`
+- Username: `user2` Password: `asm`
+
+Create a `users` table:
+```
+id, username, password, created_at
+```
+
+User session stored in localStorage as `resq_user_session`.
+
+Login page design: same design tokens as rest of app. Logo.tsx at top. Simple username + password form. Link to register below. On success redirect to previous page or home.
+
+Register page: Username, Password, Confirm Password. On success auto-login and redirect to home.
+
+Add a user avatar/icon in the navbar top-right when logged in. Clicking it shows a small dropdown: Profile, Logout.
+
+Update `AGENT_STATE.md` on completion:
+```
+✅ FINAL-REFINEMENT-V2-PHASE-4 DONE
+```
+
+---
+
+## PHASE 5 — Advisor Section
+**TAG: FINAL-REFINEMENT-V2-PHASE-5**
+
+Create a new page `/advisor`.
+
+This is a revenue feature. Users pay a fee to access professional advisors. Requires user login.
+
+Create `advisors` table:
+```
+id, name, specialization, bio, photo_path, fee, is_active, contact
+```
+
+Create `advisor_requests` table:
+```
+id, user_id, advisor_id, message, status, created_at
+```
+
+Page design:
+- Hero section: "Get Expert Advice" heading, short description
+- Grid of advisor cards: photo (or 👤 emoji placeholder), name, specialization, fee badge, "Request Consultation" button
+- Clicking Request Consultation opens a modal: message textarea + confirm button
+- On submit: insert into `advisor_requests`, show success message "Request sent. The advisor will contact you shortly."
+- If user not logged in: redirect to `/login`
+
+Admin can manage advisors from `/admin/advisor`:
+- Add advisor: Name, Specialization, Bio, Fee, Photo Upload, Contact
+- Edit / Remove advisors
+- View all consultation requests with status update (Pending / Contacted / Resolved)
+
+Update `AGENT_STATE.md` on completion:
+```
+✅ FINAL-REFINEMENT-V2-PHASE-5 DONE
+```
+
+---
+
+## PHASE 6 — Content & Navigation Fixes
+**TAG: FINAL-REFINEMENT-V2-PHASE-6**
+
+Apply these exact changes:
+
+1. SOS pulse ring button on Home page must link to `/pulseline` not `/rapiddispatch`
+
+2. SafeLink page shows only two tabs for public users:
+   - Info Links
+   - Downloadable Documents
+   Remove any other tabs from the public view.
+
+3. Admin panel SafeLink management must allow:
+   - Upload documents with a Premium toggle (is_premium boolean field)
+   - Add/remove info links
+   - If `is_premium` is true on a document, only logged-in users can download it. Logged-out users see a lock icon 🔒 and "Login to download" message.
+
+4. Bottom navigation More sheet must show all remaining pages clearly on mobile.
+
+Update `AGENT_STATE.md` on completion:
+```
+✅ FINAL-REFINEMENT-V2-PHASE-6 DONE
+```
+
+---
+
+## PHASE 7 — Mobile Navigation Fix
+**TAG: FINAL-REFINEMENT-V2-PHASE-7**
+
+The More button in mobile bottom nav must show ALL features not visible in the main 4 icons. Currently some features are hidden on mobile. Fix this:
+
+Bottom nav visible icons (mobile): Home, PulseLine, RapidDispatch, VoiceBox, More
+
+More sheet must list: AidDrop, SafeLink, SafeShield, Charity, Advisor
+
+Each item in the More sheet has an icon, name, and taps to navigate. Sheet closes on selection.
+
+On desktop navbar all pages must be visible as links. If screen is too narrow to show all, collapse into a hamburger menu that shows all pages in a dropdown.
+
+Update `AGENT_STATE.md` on completion:
+```
+✅ FINAL-REFINEMENT-V2-PHASE-7 DONE
+```
+
+---
+
+## PHASE 8 — Premium Document Access
+**TAG: FINAL-REFINEMENT-V2-PHASE-8**
+
+Documents in SafeLink with `is_premium = true` must behave like this:
+
+- Logged-out user sees document card with 🔒 lock icon and grayed Download button with text "Login to access"
+- Logged-in user sees normal Download button
+- Admin can toggle `is_premium` on any document from `/admin/safelink`
+
+Add 3 example premium documents seeded into the database with realistic names like:
+- "Nepal Disaster Risk Assessment Report 2024" — Premium
+- "Emergency Legal Rights Handbook" — Premium  
+- "Medical Emergency Response Protocol" — Premium
+
+Add 3 example free documents:
+- "Basic First Aid Guide" — Free
+- "Emergency Contact Directory" — Free
+- "Flood Evacuation Checklist" — Free
+
+Update `AGENT_STATE.md` on completion:
+```
+✅ FINAL-REFINEMENT-V2-PHASE-8 DONE
+```
+
+---
+
+## PHASE 9 — Final Polish & Deploy Prep
+**TAG: FINAL-REFINEMENT-V2-PHASE-9**
+
+1. Add `next.config.js` optimizations:
+```js
+const nextConfig = {
+  output: 'standalone',
+  swcMinify: true,
+  experimental: { optimizeCss: true }
+}
+module.exports = nextConfig
+```
+
+2. Add to every SWR call:
+```js
+{ revalidateOnFocus: false, revalidateOnReconnect: false, dedupingInterval: 60000 }
+```
+
+3. Remove all `console.log` debug statements
+
+4. Add `LIMIT 100` to every SQLite/Turso SELECT query without a limit
+
+5. Create `.env.example`:
+```
+TURSO_DATABASE_URL=
+TURSO_AUTH_TOKEN=
+```
+
+6. Update `README_NEXT_AGENT.md` with final deployment instructions:
+- How to set up Turso database
+- How to add env vars in Vercel
+- How to run seed after deployment
+- Admin login credentials
+- User login credentials
+
+Update `AGENT_STATE.md` on completion:
+```
+✅ FINAL-REFINEMENT-V2-PHASE-9 DONE
+ALL PHASES COMPLETE — APP IS DEMO AND DEPLOY READY
+```
+
+---
+
+## AGENT_STATE.md Structure After Each Phase
+
+```markdown
+# AGENT_STATE.md
+## TAG: FINAL-REFINEMENT-V2
+
+## PHASE TRACKER
+- [ ] PHASE 1 — Auth Restructure
+- [ ] PHASE 2 — Database Migration
+- [ ] PHASE 3 — Admin Panel Fix
+- [ ] PHASE 4 — User Login System
+- [ ] PHASE 5 — Advisor Section
+- [ ] PHASE 6 — Content & Navigation Fixes
+- [ ] PHASE 7 — Mobile Navigation Fix
+- [ ] PHASE 8 — Premium Document Access
+- [ ] PHASE 9 — Final Polish & Deploy Prep
+
+## LAST_COMPLETED
+(phase name and what was done)
+
+## NEXT_TASK
+(exact next phase and first step)
+
+## BLOCKED_BY
+(anything blocking or NONE)
+
+## NOTES FOR NEXT AGENT
+(anything critical to know)
+```
+
+---
+
+*ResQ Nepal — Final Refinement Master Prompt v2.0 | TAG: FINAL-REFINEMENT-V2*

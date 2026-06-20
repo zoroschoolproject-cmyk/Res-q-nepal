@@ -1,0 +1,38 @@
+[
+  {
+    "name": "NDRRMA Portal",
+    "url": "https://bipad.gov.np",
+    "description": "National Disaster Risk Reduction and Management Authority - live incident mapping and disaster profiles.",
+    "category": "Disaster Management"
+  },
+  {
+    "name": "Department of Hydrology and Meteorology",
+    "url": "http://dhm.gov.np",
+    "description": "Real-time weather reports, river level monitoring, flood alerts, and warnings.",
+    "category": "Weather & Flood Warnings"
+  },
+  {
+    "name": "National Earthquake Monitoring & Research Center",
+    "url": "http://seismology.gov.np",
+    "description": "Earthquake mapping, magnitudes, epicenters, and historical seismic research data in Nepal.",
+    "category": "Disaster Management"
+  },
+  {
+    "name": "Ministry of Home Affairs (MoHA)",
+    "url": "https://moha.gov.np",
+    "description": "Government administration policies, national security updates, and crisis circulars.",
+    "category": "Government Portal"
+  },
+  {
+    "name": "Nepal Red Cross Society",
+    "url": "https://nrcs.org",
+    "description": "Information on humanitarian assistance, active blood drives, volunteering, and local chapters.",
+    "category": "Humanitarian & NGO"
+  },
+  {
+    "name": "Nepal Police Official Website",
+    "url": "https://nepalpolice.gov.np",
+    "description": "Reporting crime, tracking investigations, local station directories, and safety advisories.",
+    "category": "Government Portal"
+  }
+]
