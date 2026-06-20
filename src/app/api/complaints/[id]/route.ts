@@ -9,6 +9,7 @@ export async function PATCH(
   { params }: RouteParams
 ) {
   try {
+    const client = db.getClient();
     const { id } = await params;
     const complaintId = parseInt(id, 10);
 
@@ -23,18 +24,25 @@ export async function PATCH(
       return NextResponse.json({ error: 'Status is required' }, { status: 400 });
     }
 
-    const info = await db.prepare(`
-      UPDATE complaints
-      SET status = ?, admin_response = ?
-      WHERE id = ?
-    `).run(status, admin_response || null, complaintId);
+    await client.execute({
+      sql: `
+        UPDATE complaints
+        SET status = ?, admin_response = ?
+        WHERE id = ?
+      `,
+      args: [status, admin_response || null, complaintId]
+    });
 
-    if (info.changes === 0) {
+    // Check if row exists
+    const checkResult = await client.execute({
+      sql: 'SELECT * FROM complaints WHERE id = ?',
+      args: [complaintId]
+    });
+    if (checkResult.rows.length === 0) {
       return NextResponse.json({ error: 'Complaint not found' }, { status: 404 });
     }
 
-    const updatedComplaint = await db.prepare('SELECT * FROM complaints WHERE id = ?').get(complaintId);
-    return NextResponse.json(updatedComplaint);
+    return NextResponse.json(checkResult.rows[0]);
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

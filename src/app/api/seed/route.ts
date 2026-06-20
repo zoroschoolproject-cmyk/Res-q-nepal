@@ -1,13 +1,21 @@
 import { NextResponse } from 'next/server';
-import { initDb } from '@/lib/db';
+import { initDb, reseedDatabase } from '@/lib/db';
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    await initDb();
-    return NextResponse.json({ 
-      success: true, 
-      message: 'Database initialized successfully' 
-    });
+    const { searchParams } = new URL(request.url);
+    const shouldReseed = searchParams.get('force') === 'true';
+    
+    if (shouldReseed) {
+      const reseedResult = await reseedDatabase();
+      return NextResponse.json(reseedResult);
+    } else {
+      await initDb();
+      return NextResponse.json({ 
+        success: true, 
+        message: 'Database initialized successfully' 
+      });
+    }
   } catch (error) {
     return NextResponse.json({ 
       success: false, 

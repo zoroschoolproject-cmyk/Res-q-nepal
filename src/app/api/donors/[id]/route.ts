@@ -9,6 +9,7 @@ export async function PATCH(
   { params }: RouteParams
 ) {
   try {
+    const client = db.getClient();
     const { id } = await params;
     const donorId = parseInt(id, 10);
 
@@ -23,14 +24,21 @@ export async function PATCH(
       return NextResponse.json({ error: 'Status is required' }, { status: 400 });
     }
 
-    const info = await db.prepare('UPDATE donors SET status = ? WHERE id = ?').run(status, donorId);
+    await client.execute({
+      sql: 'UPDATE donors SET status = ? WHERE id = ?',
+      args: [status, donorId]
+    });
 
-    if (info.changes === 0) {
+    // Check if row exists
+    const checkResult = await client.execute({
+      sql: 'SELECT * FROM donors WHERE id = ?',
+      args: [donorId]
+    });
+    if (checkResult.rows.length === 0) {
       return NextResponse.json({ error: 'Donor listing not found' }, { status: 404 });
     }
 
-    const updatedDonor = await db.prepare('SELECT * FROM donors WHERE id = ?').get(donorId);
-    return NextResponse.json(updatedDonor);
+    return NextResponse.json(checkResult.rows[0]);
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
@@ -42,6 +50,7 @@ export async function DELETE(
   { params }: RouteParams
 ) {
   try {
+    const client = db.getClient();
     const { id } = await params;
     const donorId = parseInt(id, 10);
 
@@ -49,11 +58,19 @@ export async function DELETE(
       return NextResponse.json({ error: 'Invalid donor ID' }, { status: 400 });
     }
 
-    const info = await db.prepare('DELETE FROM donors WHERE id = ?').run(donorId);
-
-    if (info.changes === 0) {
+    // Check if row exists first
+    const checkResult = await client.execute({
+      sql: 'SELECT * FROM donors WHERE id = ?',
+      args: [donorId]
+    });
+    if (checkResult.rows.length === 0) {
       return NextResponse.json({ error: 'Donor listing not found' }, { status: 404 });
     }
+
+    await client.execute({
+      sql: 'DELETE FROM donors WHERE id = ?',
+      args: [donorId]
+    });
 
     return NextResponse.json({ success: true, message: 'Donor listing deleted successfully' });
   } catch (error: any) {

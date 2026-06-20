@@ -9,6 +9,7 @@ export async function PATCH(
   { params }: RouteParams
 ) {
   try {
+    const client = db.getClient();
     const { id } = await params;
     const contactId = parseInt(id, 10);
 
@@ -23,18 +24,25 @@ export async function PATCH(
       return NextResponse.json({ error: 'Name, number, and category are required' }, { status: 400 });
     }
 
-    const info = await db.prepare(`
-      UPDATE contacts
-      SET name = ?, number = ?, category = ?, description = ?, district = ?, location_text = ?, latitude = ?, longitude = ?
-      WHERE id = ?
-    `).run(name, number, category, description || null, district || null, location_text || null, latitude || null, longitude || null, contactId);
+    await client.execute({
+      sql: `
+        UPDATE contacts
+        SET name = ?, number = ?, category = ?, description = ?, district = ?, location_text = ?, latitude = ?, longitude = ?
+        WHERE id = ?
+      `,
+      args: [name, number, category, description || null, district || null, location_text || null, latitude || null, longitude || null, contactId]
+    });
 
-    if (info.changes === 0) {
+    // Check if row exists
+    const checkResult = await client.execute({
+      sql: 'SELECT * FROM contacts WHERE id = ?',
+      args: [contactId]
+    });
+    if (checkResult.rows.length === 0) {
       return NextResponse.json({ error: 'Contact not found' }, { status: 404 });
     }
 
-    const updatedContact = await db.prepare('SELECT * FROM contacts WHERE id = ?').get(contactId);
-    return NextResponse.json(updatedContact);
+    return NextResponse.json(checkResult.rows[0]);
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
@@ -46,6 +54,7 @@ export async function DELETE(
   { params }: RouteParams
 ) {
   try {
+    const client = db.getClient();
     const { id } = await params;
     const contactId = parseInt(id, 10);
 
@@ -53,11 +62,19 @@ export async function DELETE(
       return NextResponse.json({ error: 'Invalid contact ID' }, { status: 400 });
     }
 
-    const info = await db.prepare('DELETE FROM contacts WHERE id = ?').run(contactId);
-
-    if (info.changes === 0) {
+    // Check if row exists first
+    const checkResult = await client.execute({
+      sql: 'SELECT * FROM contacts WHERE id = ?',
+      args: [contactId]
+    });
+    if (checkResult.rows.length === 0) {
       return NextResponse.json({ error: 'Contact not found' }, { status: 404 });
     }
+
+    await client.execute({
+      sql: 'DELETE FROM contacts WHERE id = ?',
+      args: [contactId]
+    });
 
     return NextResponse.json({ success: true, message: 'Contact deleted successfully' });
   } catch (error: any) {

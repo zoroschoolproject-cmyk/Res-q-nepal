@@ -4,19 +4,23 @@ import db from '@/lib/db';
 // GET /api/complaints - Fetch all complaints OR query by complaint_id
 export async function GET(request: Request) {
   try {
+    const client = db.getClient();
     const { searchParams } = new URL(request.url);
     const complaintId = searchParams.get('complaint_id');
 
     if (complaintId) {
-      const complaint = await db.prepare('SELECT * FROM complaints WHERE complaint_id = ?').get(complaintId);
-      if (!complaint) {
+      const result = await client.execute({
+        sql: 'SELECT * FROM complaints WHERE complaint_id = ?',
+        args: [complaintId]
+      });
+      if (result.rows.length === 0) {
         return NextResponse.json({ error: 'Complaint not found' }, { status: 404 });
       }
-      return NextResponse.json(complaint);
+      return NextResponse.json(result.rows[0]);
     }
 
-    const complaints = await db.prepare('SELECT * FROM complaints ORDER BY created_at DESC LIMIT 50').all();
-    return NextResponse.json(complaints);
+    const result = await client.execute('SELECT * FROM complaints ORDER BY created_at DESC LIMIT 50');
+    return NextResponse.json(result.rows);
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
@@ -60,20 +64,31 @@ export async function POST(request: Request) {
     const randomStr = Math.floor(1000 + Math.random() * 9000).toString();
     const complaintId = `CV-${dateStr}-${randomStr}`;
 
-    const info = await db.prepare(`
-      INSERT INTO complaints (
-        subject, category, description, status, complaint_id, 
-        complainant_name, complainant_phone, location_text, district, latitude, longitude, is_anonymous, image_path
-      ) VALUES (?, ?, ?, 'Submitted', ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `).run(
-      subject, category, description, complaintId,
-      complainant_name || null, complainant_phone || null, 
-      location_text || null, district || null, latitude || null, longitude || null, 
-      is_anonymous ? 1 : 0, image_path
-    );
+    const client = db.getClient();
+    await client.execute({
+      sql: `
+        INSERT INTO complaints (
+          subject, category, description, status, complaint_id, 
+          complainant_name, complainant_phone, location_text, district, latitude, longitude, is_anonymous, image_path
+        ) VALUES (?, ?, ?, 'Submitted', ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `,
+      args: [
+        subject, category, description, complaintId,
+        complainant_name || null, complainant_phone || null, 
+        location_text || null, district || null, latitude || null, longitude || null, 
+        is_anonymous ? 1 : 0, image_path
+      ]
+    });
 
-    const newComplaint = await db.prepare('SELECT * FROM complaints WHERE id = ?').get(info.lastInsertRowid);
-    return NextResponse.json(newComplaint, { status: 201 });
+    // Get last inserted row
+    const lastInsertResult = await client.execute('SELECT last_insert_rowid() as id');
+    const lastId = lastInsertResult.rows[0].id;
+    const newComplaintResult = await client.execute({
+      sql: 'SELECT * FROM complaints WHERE id = ?',
+      args: [lastId]
+    });
+    
+    return NextResponse.json(newComplaintResult.rows[0], { status: 201 });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

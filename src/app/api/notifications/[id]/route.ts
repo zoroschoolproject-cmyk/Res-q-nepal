@@ -9,6 +9,7 @@ export async function PATCH(
   { params }: RouteParams
 ) {
   try {
+    const client = db.getClient();
     const { id } = await params;
     const notificationId = parseInt(id, 10);
 
@@ -16,11 +17,19 @@ export async function PATCH(
       return NextResponse.json({ error: 'Invalid notification ID' }, { status: 400 });
     }
 
-    const info = await db.prepare('UPDATE notifications SET is_read = 1 WHERE id = ?').run(notificationId);
-
-    if (info.changes === 0) {
+    // Check if row exists first
+    const checkResult = await client.execute({
+      sql: 'SELECT * FROM notifications WHERE id = ?',
+      args: [notificationId]
+    });
+    if (checkResult.rows.length === 0) {
       return NextResponse.json({ error: 'Notification not found' }, { status: 404 });
     }
+
+    await client.execute({
+      sql: 'UPDATE notifications SET is_read = 1 WHERE id = ?',
+      args: [notificationId]
+    });
 
     return NextResponse.json({ success: true, message: 'Notification marked as read' });
   } catch (error: any) {

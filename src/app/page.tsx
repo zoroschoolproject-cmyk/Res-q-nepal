@@ -28,11 +28,15 @@ const FEATURES = [
 ];
 
 export default async function HomePage() {
+  const client = db.getClient();
+  
   // Query pinned notices from notices table
-  const notices = await db.prepare('SELECT * FROM notices WHERE is_pinned = 1 ORDER BY created_at DESC LIMIT 100').all() as any[];
+  const noticesResult = await client.execute('SELECT * FROM notices WHERE is_pinned = 1 ORDER BY created_at DESC LIMIT 100');
+  const notices = noticesResult.rows as any[];
 
   // Query latest 3 unread notifications for dashboard widget
-  const recentNotifications = await db.prepare('SELECT * FROM notifications WHERE is_read = 0 ORDER BY created_at DESC LIMIT 3').all() as any[];
+  const recentNotificationsResult = await client.execute('SELECT * FROM notifications WHERE is_read = 0 ORDER BY created_at DESC LIMIT 3');
+  const recentNotifications = recentNotificationsResult.rows as any[];
 
   return (
     <div className="flex flex-col gap-10 w-full animate-in fade-in duration-200">

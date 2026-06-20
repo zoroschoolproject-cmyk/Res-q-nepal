@@ -7,7 +7,8 @@
     "district": "All",
     "location_text": "Nationwide",
     "latitude": null,
-    "longitude": null
+    "longitude": null,
+    "map_link": null
   },
   {
     "name": "Fire Brigade (Emergency)",
@@ -17,7 +18,8 @@
     "district": "All",
     "location_text": "Nationwide",
     "latitude": null,
-    "longitude": null
+    "longitude": null,
+    "map_link": null
   },
   {
     "name": "Nepal Red Cross Society (Ambulance)",
@@ -27,7 +29,8 @@
     "district": "All",
     "location_text": "Nationwide",
     "latitude": null,
-    "longitude": null
+    "longitude": null,
+    "map_link": null
   },
   {
     "name": "Traffic Police (Emergency)",
@@ -37,7 +40,8 @@
     "district": "All",
     "location_text": "Nationwide",
     "latitude": null,
-    "longitude": null
+    "longitude": null,
+    "map_link": null
   },
   {
     "name": "Child Helpline Nepal",
@@ -47,7 +51,8 @@
     "district": "All",
     "location_text": "Nationwide",
     "latitude": null,
-    "longitude": null
+    "longitude": null,
+    "map_link": null
   },
   {
     "name": "National Emergency Operation Center (NEOC)",
@@ -57,39 +62,85 @@
     "district": "Kathmandu",
     "location_text": "Singha Durbar, Kathmandu",
     "latitude": 27.6979,
-    "longitude": 85.3200
+    "longitude": 85.3200,
+    "map_link": "https://www.google.com/maps?q=27.6979,85.3200"
   },
-
-  // Kathmandu District
   {
     "name": "Kathmandu Metropolitan Police",
-    "number": "01-4261945",
+    "number": "01-4261945, 9851283012",
     "category": "Police",
     "description": "Local police station for Kathmandu city incidents.",
     "district": "Kathmandu",
     "location_text": "New Road, Kathmandu",
     "latitude": 27.7080,
-    "longitude": 85.3180
+    "longitude": 85.3180,
+    "map_link": "https://www.google.com/maps?q=27.7080,85.3180"
+  },
+  {
+    "name": "Tourist Police Bhrikutimandap",
+    "number": "01-4247041, 1144",
+    "category": "Police",
+    "description": "Tourist assistance and safety.",
+    "district": "Kathmandu",
+    "location_text": "Bhrikutimandap, Kathmandu",
+    "latitude": 27.7040,
+    "longitude": 85.3190,
+    "map_link": "https://www.google.com/maps?q=27.7040,85.3190"
+  },
+  {
+    "name": "Tourist Police Thamel",
+    "number": "9851289444",
+    "category": "Police",
+    "description": "Tourist assistance in Thamel area.",
+    "district": "Kathmandu",
+    "location_text": "Thamel, Kathmandu",
+    "latitude": 27.7170,
+    "longitude": 85.3120,
+    "map_link": "https://www.google.com/maps?q=27.7170,85.3120"
   },
   {
     "name": "Kathmandu Fire Station",
-    "number": "01-4261901",
+    "number": "101, 01-4261901",
     "category": "Fire Brigade",
     "description": "Central fire station for Kathmandu valley.",
     "district": "Kathmandu",
     "location_text": "Putalisadak, Kathmandu",
     "latitude": 27.7150,
-    "longitude": 85.3200
+    "longitude": 85.3200,
+    "map_link": "https://www.google.com/maps?q=27.7150,85.3200"
   },
   {
     "name": "Bir Hospital Emergency",
-    "number": "01-4221119",
+    "number": "01-4221119, 01-4221988",
     "category": "Medical",
     "description": "24/7 emergency and trauma care services.",
     "district": "Kathmandu",
     "location_text": "Tundikhel, Kathmandu",
     "latitude": 27.7045,
-    "longitude": 85.3180
+    "longitude": 85.3180,
+    "map_link": "https://www.google.com/maps?q=27.7045,85.3180"
+  },
+  {
+    "name": "TU Teaching Hospital Emergency",
+    "number": "01-4412303, 01-4410911",
+    "category": "Medical",
+    "description": "Emergency medical services at TU Teaching Hospital.",
+    "district": "Kathmandu",
+    "location_text": "Maharajgunj, Kathmandu",
+    "latitude": 27.7280,
+    "longitude": 85.3330,
+    "map_link": "https://www.google.com/maps?q=27.7280,85.3330"
+  },
+  {
+    "name": "Nepal Police Hospital",
+    "number": "01-4412430",
+    "category": "Medical",
+    "description": "Police hospital emergency services.",
+    "district": "Kathmandu",
+    "location_text": "Maharajgunj, Kathmandu",
+    "latitude": 27.7260,
+    "longitude": 85.3310,
+    "map_link": "https://www.google.com/maps?q=27.7260,85.3310"
   },
   {
     "name": "NEOC Kathmandu",
@@ -99,7 +150,19 @@
     "district": "Kathmandu",
     "location_text": "Singha Durbar, Kathmandu",
     "latitude": 27.6980,
-    "longitude": 85.3200
+    "longitude": 85.3200,
+    "map_link": "https://www.google.com/maps?q=27.6980,85.3200"
+  },
+  {
+    "name": "Nepal Red Cross Society - Central Office",
+    "number": "01-5006465",
+    "category": "Disaster Management",
+    "description": "Disaster relief and blood bank services.",
+    "district": "Kathmandu",
+    "location_text": "Soltimode, Kathmandu",
+    "latitude": 27.7020,
+    "longitude": 85.3150,
+    "map_link": "https://www.google.com/maps?q=27.7020,85.3150"
   },
   {
     "name": "Women's Cell - Kathmandu Police",
@@ -109,49 +172,107 @@
     "district": "Kathmandu",
     "location_text": "Hanuman Dhoka, Kathmandu",
     "latitude": 27.7030,
-    "longitude": 85.3080
+    "longitude": 85.3080,
+    "map_link": "https://www.google.com/maps?q=27.7030,85.3080"
   },
-
-  // Lalitpur District
+  {
+    "name": "Maiti Nepal",
+    "number": "01-4440707",
+    "category": "Women & Child Safety",
+    "description": "Support for survivors of trafficking and violence.",
+    "district": "Kathmandu",
+    "location_text": "Kupondole, Lalitpur",
+    "latitude": 27.6820,
+    "longitude": 85.3150,
+    "map_link": "https://www.google.com/maps?q=27.6820,85.3150"
+  },
   {
     "name": "Lalitpur Metropolitan Police",
-    "number": "01-5521201",
+    "number": "01-5521207, 01-5521350, 9851283017",
     "category": "Police",
     "description": "Local police services for Lalitpur city.",
     "district": "Lalitpur",
     "location_text": "Patan Dhoka, Lalitpur",
     "latitude": 27.6730,
-    "longitude": 85.3180
+    "longitude": 85.3180,
+    "map_link": "https://www.google.com/maps?q=27.6730,85.3180"
+  },
+  {
+    "name": "Tourist Police Mangal Bazar",
+    "number": "01-5521450",
+    "category": "Police",
+    "description": "Tourist assistance in Patan area.",
+    "district": "Lalitpur",
+    "location_text": "Mangal Bazar, Patan",
+    "latitude": 27.6710,
+    "longitude": 85.3190,
+    "map_link": "https://www.google.com/maps?q=27.6710,85.3190"
   },
   {
     "name": "Lalitpur Fire Station",
-    "number": "01-5521100",
+    "number": "101, 01-5521100, 01-5521111",
     "category": "Fire Brigade",
     "description": "Fire emergency response for Lalitpur.",
     "district": "Lalitpur",
     "location_text": "Lagankhel, Lalitpur",
     "latitude": 27.6680,
-    "longitude": 85.3120
+    "longitude": 85.3120,
+    "map_link": "https://www.google.com/maps?q=27.6680,85.3120"
   },
   {
     "name": "Patan Hospital Emergency",
-    "number": "01-5522295",
+    "number": "01-5522295, 01-5522266",
     "category": "Medical",
     "description": "Emergency medical services at Patan Hospital.",
     "district": "Lalitpur",
     "location_text": "Patan, Lalitpur",
     "latitude": 27.6720,
-    "longitude": 85.3180
+    "longitude": 85.3180,
+    "map_link": "https://www.google.com/maps?q=27.6720,85.3180"
+  },
+  {
+    "name": "KIST Medical College & Teaching Hospital",
+    "number": "01-5550000",
+    "category": "Medical",
+    "description": "Emergency services at KIST Hospital.",
+    "district": "Lalitpur",
+    "location_text": "Gwarko, Lalitpur",
+    "latitude": 27.6650,
+    "longitude": 85.3300,
+    "map_link": "https://www.google.com/maps?q=27.6650,85.3300"
+  },
+  {
+    "name": "Nepal Red Cross Society - Lalitpur Blood Transfusion Center",
+    "number": "01-5427033",
+    "category": "Medical",
+    "description": "Blood bank and transfusion services.",
+    "district": "Lalitpur",
+    "location_text": "Pulchowk, Lalitpur",
+    "latitude": 27.6690,
+    "longitude": 85.3200,
+    "map_link": "https://www.google.com/maps?q=27.6690,85.3200"
   },
   {
     "name": "Lalitpur Disaster Management Office",
-    "number": "01-5521400",
+    "number": "01-5523051",
     "category": "Disaster Management",
     "description": "Local disaster preparedness and response.",
     "district": "Lalitpur",
     "location_text": "Lalitpur Municipality",
     "latitude": 27.6700,
-    "longitude": 85.3150
+    "longitude": 85.3150,
+    "map_link": "https://www.google.com/maps?q=27.6700,85.3150"
+  },
+  {
+    "name": "District Administration Office, Lalitpur",
+    "number": "01-5523051",
+    "category": "Disaster Management",
+    "description": "Administration and disaster coordination.",
+    "district": "Lalitpur",
+    "location_text": "Lalitpur",
+    "latitude": 27.6700,
+    "longitude": 85.3150,
+    "map_link": "https://www.google.com/maps?q=27.6700,85.3150"
   },
   {
     "name": "Maiti Nepal - Lalitpur",
@@ -161,39 +282,85 @@
     "district": "Lalitpur",
     "location_text": "Pulchowk, Lalitpur",
     "latitude": 27.6650,
-    "longitude": 85.3190
+    "longitude": 85.3190,
+    "map_link": "https://www.google.com/maps?q=27.6650,85.3190"
   },
-
-  // Bhaktapur District
+  {
+    "name": "District Public Health Office, Lalitpur",
+    "number": "01-5547915",
+    "category": "Women & Child Safety",
+    "description": "Public health and family services.",
+    "district": "Lalitpur",
+    "location_text": "Lalitpur",
+    "latitude": 27.6680,
+    "longitude": 85.3140,
+    "map_link": "https://www.google.com/maps?q=27.6680,85.3140"
+  },
   {
     "name": "Bhaktapur Metropolitan Police",
-    "number": "01-6612001",
+    "number": "01-6614852, 01-6614708",
     "category": "Police",
     "description": "Police services for Bhaktapur city.",
     "district": "Bhaktapur",
     "location_text": "Durbar Square, Bhaktapur",
     "latitude": 27.6730,
-    "longitude": 85.4270
+    "longitude": 85.4270,
+    "map_link": "https://www.google.com/maps?q=27.6730,85.4270"
+  },
+  {
+    "name": "Tourist Police Bhaktapur",
+    "number": "01-6612500",
+    "category": "Police",
+    "description": "Tourist assistance in Bhaktapur.",
+    "district": "Bhaktapur",
+    "location_text": "Bhaktapur Durbar Square",
+    "latitude": 27.6720,
+    "longitude": 85.4270,
+    "map_link": "https://www.google.com/maps?q=27.6720,85.4270"
   },
   {
     "name": "Bhaktapur Fire Station",
-    "number": "01-6612100",
+    "number": "101, 01-6612100",
     "category": "Fire Brigade",
     "description": "Fire emergency response for Bhaktapur.",
     "district": "Bhaktapur",
     "location_text": "Bhaktapur",
     "latitude": 27.6700,
-    "longitude": 85.4250
+    "longitude": 85.4250,
+    "map_link": "https://www.google.com/maps?q=27.6700,85.4250"
   },
   {
     "name": "Bhaktapur Hospital Emergency",
-    "number": "01-6612295",
+    "number": "01-6610676",
     "category": "Medical",
     "description": "Emergency care at Bhaktapur Hospital.",
     "district": "Bhaktapur",
-    "location_text": "Bhaktapur",
+    "location_text": "Dudhpati, Bhaktapur",
     "latitude": 27.6720,
-    "longitude": 85.4280
+    "longitude": 85.4280,
+    "map_link": "https://www.google.com/maps?q=27.6720,85.4280"
+  },
+  {
+    "name": "Bhaktapur Cancer Hospital",
+    "number": "01-6611532, 9860171552",
+    "category": "Medical",
+    "description": "Cancer hospital emergency services.",
+    "district": "Bhaktapur",
+    "location_text": "Bhaktapur",
+    "latitude": 27.6710,
+    "longitude": 85.4260,
+    "map_link": "https://www.google.com/maps?q=27.6710,85.4260"
+  },
+  {
+    "name": "Siddhi Smriti Hospital",
+    "number": "01-6610570, 9841204991",
+    "category": "Medical",
+    "description": "Private hospital emergency services.",
+    "district": "Bhaktapur",
+    "location_text": "Bhaktapur",
+    "latitude": 27.6700,
+    "longitude": 85.4250,
+    "map_link": "https://www.google.com/maps?q=27.6700,85.4250"
   },
   {
     "name": "Bhaktapur DM Office",
@@ -203,7 +370,19 @@
     "district": "Bhaktapur",
     "location_text": "Bhaktapur Municipality",
     "latitude": 27.6710,
-    "longitude": 85.4260
+    "longitude": 85.4260,
+    "map_link": "https://www.google.com/maps?q=27.6710,85.4260"
+  },
+  {
+    "name": "Nepal Red Cross Society - Bhaktapur",
+    "number": "01-6612266, 9841489408, 01-6619661",
+    "category": "Disaster Management",
+    "description": "Red Cross services and blood bank.",
+    "district": "Bhaktapur",
+    "location_text": "Dudhpati, Bhaktapur",
+    "latitude": 27.6720,
+    "longitude": 85.4270,
+    "map_link": "https://www.google.com/maps?q=27.6720,85.4270"
   },
   {
     "name": "Bhaktapur Women's Service Center",
@@ -213,39 +392,96 @@
     "district": "Bhaktapur",
     "location_text": "Bhaktapur",
     "latitude": 27.6690,
-    "longitude": 85.4240
+    "longitude": 85.4240,
+    "map_link": "https://www.google.com/maps?q=27.6690,85.4240"
   },
-
-  // Pokhara District
   {
-    "name": "Pokhara Metropolitan Police",
-    "number": "061-520201",
+    "name": "Bhaktapur Red Cross Blood Bank",
+    "number": "01-6612266",
+    "category": "Women & Child Safety",
+    "description": "Blood bank and emergency services.",
+    "district": "Bhaktapur",
+    "location_text": "Bhaktapur",
+    "latitude": 27.6710,
+    "longitude": 85.4260,
+    "map_link": "https://www.google.com/maps?q=27.6710,85.4260"
+  },
+  {
+    "name": "Kaski District Police",
+    "number": "061-522099, 9856039599, 9856005555",
     "category": "Police",
-    "description": "Police services for Pokhara city.",
+    "description": "Police services for Kaski/Pokhara.",
     "district": "Pokhara",
     "location_text": "Chipledhunga, Pokhara",
     "latitude": 28.2090,
-    "longitude": 83.9850
+    "longitude": 83.9850,
+    "map_link": "https://www.google.com/maps?q=28.2090,83.9850"
+  },
+  {
+    "name": "Tourist Police Pokhara",
+    "number": "061-520300, 9856015555",
+    "category": "Police",
+    "description": "Tourist assistance in Pokhara.",
+    "district": "Pokhara",
+    "location_text": "Lakeside, Pokhara",
+    "latitude": 28.2050,
+    "longitude": 83.9560,
+    "map_link": "https://www.google.com/maps?q=28.2050,83.9560"
+  },
+  {
+    "name": "Tourist Police Dhampus",
+    "number": "9856025555",
+    "category": "Police",
+    "description": "Tourist assistance in Dhampus.",
+    "district": "Pokhara",
+    "location_text": "Dhampus, Kaski",
+    "latitude": 28.3100,
+    "longitude": 84.0100,
+    "map_link": "https://www.google.com/maps?q=28.3100,84.0100"
   },
   {
     "name": "Pokhara Fire Station",
-    "number": "061-520301",
+    "number": "101, 061-520301",
     "category": "Fire Brigade",
     "description": "Fire emergency response for Pokhara.",
     "district": "Pokhara",
     "location_text": "Pokhara",
     "latitude": 28.2080,
-    "longitude": 83.9840
+    "longitude": 83.9840,
+    "map_link": "https://www.google.com/maps?q=28.2080,83.9840"
   },
   {
-    "name": "Pokhara Grande Hospital Emergency",
-    "number": "061-520401",
+    "name": "Pokhara Academy of Health Sciences (WRH) Emergency",
+    "number": "061-520201",
     "category": "Medical",
     "description": "Emergency medical services in Pokhara.",
     "district": "Pokhara",
-    "location_text": "Lakeside, Pokhara",
+    "location_text": "Pokhara",
     "latitude": 28.2070,
-    "longitude": 83.9830
+    "longitude": 83.9830,
+    "map_link": "https://www.google.com/maps?q=28.2070,83.9830"
+  },
+  {
+    "name": "Manipal Teaching Hospital",
+    "number": "061-520101",
+    "category": "Medical",
+    "description": "Teaching hospital emergency services.",
+    "district": "Pokhara",
+    "location_text": "Pokhara",
+    "latitude": 28.2060,
+    "longitude": 83.9820,
+    "map_link": "https://www.google.com/maps?q=28.2060,83.9820"
+  },
+  {
+    "name": "Gandaki Medical College",
+    "number": "061-520400",
+    "category": "Medical",
+    "description": "Medical college emergency services.",
+    "district": "Pokhara",
+    "location_text": "Pokhara",
+    "latitude": 28.2050,
+    "longitude": 83.9810,
+    "map_link": "https://www.google.com/maps?q=28.2050,83.9810"
   },
   {
     "name": "Kaski District DM Office",
@@ -255,7 +491,19 @@
     "district": "Pokhara",
     "location_text": "Pokhara",
     "latitude": 28.2060,
-    "longitude": 83.9820
+    "longitude": 83.9820,
+    "map_link": "https://www.google.com/maps?q=28.2060,83.9820"
+  },
+  {
+    "name": "Nepal Red Cross Society - Gandaki Province",
+    "number": "9846043950, 061-531911, 061-531910",
+    "category": "Disaster Management",
+    "description": "Red Cross disaster relief services.",
+    "district": "Pokhara",
+    "location_text": "Rambazar, Pokhara",
+    "latitude": 28.2100,
+    "longitude": 83.9900,
+    "map_link": "https://www.google.com/maps?q=28.2100,83.9900"
   },
   {
     "name": "Aama Samuha - Pokhara",
@@ -265,39 +513,107 @@
     "district": "Pokhara",
     "location_text": "Pokhara",
     "latitude": 28.2050,
-    "longitude": 83.9810
+    "longitude": 83.9810,
+    "map_link": "https://www.google.com/maps?q=28.2050,83.9810"
   },
-
-  // Chitwan District
+  {
+    "name": "District Women and Children Office - Kaski",
+    "number": "061-520701",
+    "category": "Women & Child Safety",
+    "description": "Government women and child services.",
+    "district": "Pokhara",
+    "location_text": "Pokhara",
+    "latitude": 28.2040,
+    "longitude": 83.9800,
+    "map_link": "https://www.google.com/maps?q=28.2040,83.9800"
+  },
   {
     "name": "Chitwan District Police",
-    "number": "056-520201",
+    "number": "056-520155, 9855090133, 9855015555",
     "category": "Police",
     "description": "Police services for Chitwan.",
     "district": "Chitwan",
     "location_text": "Bharatpur, Chitwan",
     "latitude": 27.6840,
-    "longitude": 84.4320
+    "longitude": 84.4320,
+    "map_link": "https://www.google.com/maps?q=27.6840,84.4320"
+  },
+  {
+    "name": "Tourist Police Sauraha",
+    "number": "9855025555",
+    "category": "Police",
+    "description": "Tourist assistance in Sauraha.",
+    "district": "Chitwan",
+    "location_text": "Sauraha, Chitwan",
+    "latitude": 27.5750,
+    "longitude": 84.4900,
+    "map_link": "https://www.google.com/maps?q=27.5750,84.4900"
+  },
+  {
+    "name": "Tourist Police Patihani",
+    "number": "9855035555",
+    "category": "Police",
+    "description": "Tourist assistance in Patihani.",
+    "district": "Chitwan",
+    "location_text": "Patihani, Chitwan",
+    "latitude": 27.6800,
+    "longitude": 84.4400,
+    "map_link": "https://www.google.com/maps?q=27.6800,84.4400"
   },
   {
     "name": "Chitwan Fire Station",
-    "number": "056-520301",
+    "number": "101, 056-520301",
     "category": "Fire Brigade",
     "description": "Fire emergency response for Chitwan.",
     "district": "Chitwan",
     "location_text": "Bharatpur",
     "latitude": 27.6830,
-    "longitude": 84.4310
+    "longitude": 84.4310,
+    "map_link": "https://www.google.com/maps?q=27.6830,84.4310"
   },
   {
     "name": "B.P. Koirala Memorial Cancer Hospital Emergency",
     "number": "056-520401",
     "category": "Medical",
-    "description": "Emergency services in Chitwan.",
+    "description": "Emergency services at cancer hospital.",
     "district": "Chitwan",
     "location_text": "Bharatpur",
     "latitude": 27.6820,
-    "longitude": 84.4300
+    "longitude": 84.4300,
+    "map_link": "https://www.google.com/maps?q=27.6820,84.4300"
+  },
+  {
+    "name": "Chitwan Medical College Teaching Hospital",
+    "number": "056-520500, 9802955482",
+    "category": "Medical",
+    "description": "Medical college emergency services.",
+    "district": "Chitwan",
+    "location_text": "Bharatpur",
+    "latitude": 27.6810,
+    "longitude": 84.4290,
+    "map_link": "https://www.google.com/maps?q=27.6810,84.4290"
+  },
+  {
+    "name": "Bharatpur Hospital",
+    "number": "056-520600, 9855061043",
+    "category": "Medical",
+    "description": "Government hospital emergency.",
+    "district": "Chitwan",
+    "location_text": "Bharatpur",
+    "latitude": 27.6800,
+    "longitude": 84.4280,
+    "map_link": "https://www.google.com/maps?q=27.6800,84.4280"
+  },
+  {
+    "name": "College of Medical Sciences",
+    "number": "9844099921",
+    "category": "Medical",
+    "description": "Medical college emergency services.",
+    "district": "Chitwan",
+    "location_text": "Bharatpur",
+    "latitude": 27.6820,
+    "longitude": 84.4300,
+    "map_link": "https://www.google.com/maps?q=27.6820,84.4300"
   },
   {
     "name": "Chitwan DM Office",
@@ -307,7 +623,19 @@
     "district": "Chitwan",
     "location_text": "Bharatpur",
     "latitude": 27.6810,
-    "longitude": 84.4290
+    "longitude": 84.4290,
+    "map_link": "https://www.google.com/maps?q=27.6810,84.4290"
+  },
+  {
+    "name": "Nepal Red Cross Society - Chitwan District Chapter",
+    "number": "056-520133",
+    "category": "Disaster Management",
+    "description": "Red Cross disaster relief services.",
+    "district": "Chitwan",
+    "location_text": "Bharatpur",
+    "latitude": 27.6830,
+    "longitude": 84.4310,
+    "map_link": "https://www.google.com/maps?q=27.6830,84.4310"
   },
   {
     "name": "Chitwan Women's Development Office",
@@ -317,39 +645,85 @@
     "district": "Chitwan",
     "location_text": "Bharatpur",
     "latitude": 27.6800,
-    "longitude": 84.4280
+    "longitude": 84.4280,
+    "map_link": "https://www.google.com/maps?q=27.6800,84.4280"
   },
-
-  // Biratnagar District
+  {
+    "name": "District Women and Children Office - Chitwan",
+    "number": "056-520701",
+    "category": "Women & Child Safety",
+    "description": "Government women and child services.",
+    "district": "Chitwan",
+    "location_text": "Bharatpur",
+    "latitude": 27.6790,
+    "longitude": 84.4270,
+    "map_link": "https://www.google.com/maps?q=27.6790,84.4270"
+  },
+  {
+    "name": "Morang District Police",
+    "number": "021-530358, 021-527900, 9852026750, 9852005555",
+    "category": "Police",
+    "description": "Police services for Morang/Biratnagar.",
+    "district": "Biratnagar",
+    "location_text": "Biratnagar",
+    "latitude": 26.4830,
+    "longitude": 87.2750,
+    "map_link": "https://www.google.com/maps?q=26.4830,87.2750"
+  },
   {
     "name": "Biratnagar Metropolitan Police",
     "number": "021-520201",
     "category": "Police",
-    "description": "Police services for Biratnagar.",
+    "description": "Metropolitan police services.",
     "district": "Biratnagar",
     "location_text": "Biratnagar",
-    "latitude": 26.4830,
-    "longitude": 87.2750
+    "latitude": 26.4820,
+    "longitude": 87.2740,
+    "map_link": "https://www.google.com/maps?q=26.4820,87.2740"
   },
   {
     "name": "Biratnagar Fire Station",
-    "number": "021-520301",
+    "number": "101, 021-520301",
     "category": "Fire Brigade",
     "description": "Fire emergency response for Biratnagar.",
     "district": "Biratnagar",
     "location_text": "Biratnagar",
     "latitude": 26.4820,
-    "longitude": 87.2740
+    "longitude": 87.2740,
+    "map_link": "https://www.google.com/maps?q=26.4820,87.2740"
   },
   {
-    "name": "Biratnagar Hospital Emergency",
+    "name": "Noble Medical College Teaching Hospital",
     "number": "021-520401",
     "category": "Medical",
-    "description": "Emergency medical services in Biratnagar.",
+    "description": "Medical college emergency services.",
     "district": "Biratnagar",
     "location_text": "Biratnagar",
     "latitude": 26.4810,
-    "longitude": 87.2730
+    "longitude": 87.2730,
+    "map_link": "https://www.google.com/maps?q=26.4810,87.2730"
+  },
+  {
+    "name": "Biratnagar Eye Hospital",
+    "number": "021-520500",
+    "category": "Medical",
+    "description": "Eye hospital emergency services.",
+    "district": "Biratnagar",
+    "location_text": "Biratnagar",
+    "latitude": 26.4800,
+    "longitude": 87.2720,
+    "map_link": "https://www.google.com/maps?q=26.4800,87.2720"
+  },
+  {
+    "name": "Morang Cooperative Hospital",
+    "number": "021-520600",
+    "category": "Medical",
+    "description": "Cooperative hospital emergency.",
+    "district": "Biratnagar",
+    "location_text": "Biratnagar",
+    "latitude": 26.4790,
+    "longitude": 87.2710,
+    "map_link": "https://www.google.com/maps?q=26.4790,87.2710"
   },
   {
     "name": "Morang DM Office",
@@ -359,7 +733,30 @@
     "district": "Biratnagar",
     "location_text": "Biratnagar",
     "latitude": 26.4800,
-    "longitude": 87.2720
+    "longitude": 87.2720,
+    "map_link": "https://www.google.com/maps?q=26.4800,87.2720"
+  },
+  {
+    "name": "Nepal Red Cross Society - Koshi Province",
+    "number": "9842071321",
+    "category": "Disaster Management",
+    "description": "Red Cross disaster relief services.",
+    "district": "Biratnagar",
+    "location_text": "Red Cross Marga, Biratnagar",
+    "latitude": 26.4810,
+    "longitude": 87.2730,
+    "map_link": "https://www.google.com/maps?q=26.4810,87.2730"
+  },
+  {
+    "name": "Nepal Red Cross Society Regional Blood Transfusion Service Center",
+    "number": "021-423326",
+    "category": "Disaster Management",
+    "description": "Blood bank services.",
+    "district": "Biratnagar",
+    "location_text": "Devkota Chowk, Biratnagar",
+    "latitude": 26.4800,
+    "longitude": 87.2720,
+    "map_link": "https://www.google.com/maps?q=26.4800,87.2720"
   },
   {
     "name": "Biratnagar Women's Service Center",
@@ -369,39 +766,118 @@
     "district": "Biratnagar",
     "location_text": "Biratnagar",
     "latitude": 26.4790,
-    "longitude": 87.2710
+    "longitude": 87.2710,
+    "map_link": "https://www.google.com/maps?q=26.4790,87.2710"
   },
-
-  // Butwal District
+  {
+    "name": "District Women and Children Office - Morang",
+    "number": "021-520701",
+    "category": "Women & Child Safety",
+    "description": "Government women and child services.",
+    "district": "Biratnagar",
+    "location_text": "Biratnagar",
+    "latitude": 26.4780,
+    "longitude": 87.2700,
+    "map_link": "https://www.google.com/maps?q=26.4780,87.2700"
+  },
+  {
+    "name": "Rupandehi District Police",
+    "number": "071-520199, 9856090622, 9857075555",
+    "category": "Police",
+    "description": "Police services for Rupandehi/Butwal.",
+    "district": "Butwal",
+    "location_text": "Butwal",
+    "latitude": 27.7050,
+    "longitude": 83.4420,
+    "map_link": "https://www.google.com/maps?q=27.7050,83.4420"
+  },
   {
     "name": "Butwal Sub-Metropolitan Police",
     "number": "071-520201",
     "category": "Police",
-    "description": "Police services for Butwal.",
+    "description": "Sub-metropolitan police services.",
     "district": "Butwal",
     "location_text": "Butwal",
-    "latitude": 27.7050,
-    "longitude": 83.4420
+    "latitude": 27.7040,
+    "longitude": 83.4410,
+    "map_link": "https://www.google.com/maps?q=27.7040,83.4410"
+  },
+  {
+    "name": "Tourist Police Belahiya",
+    "number": "9857005555",
+    "category": "Police",
+    "description": "Tourist assistance in Belahiya.",
+    "district": "Butwal",
+    "location_text": "Belahiya, Rupandehi",
+    "latitude": 27.4900,
+    "longitude": 83.4200,
+    "map_link": "https://www.google.com/maps?q=27.4900,83.4200"
+  },
+  {
+    "name": "Tourist Police Lumbini",
+    "number": "9857015555",
+    "category": "Police",
+    "description": "Tourist assistance in Lumbini.",
+    "district": "Butwal",
+    "location_text": "Lumbini, Rupandehi",
+    "latitude": 27.4950,
+    "longitude": 83.2720,
+    "map_link": "https://www.google.com/maps?q=27.4950,83.2720"
   },
   {
     "name": "Butwal Fire Station",
-    "number": "071-520301",
+    "number": "101, 071-520301",
     "category": "Fire Brigade",
     "description": "Fire emergency response for Butwal.",
     "district": "Butwal",
     "location_text": "Butwal",
     "latitude": 27.7040,
-    "longitude": 83.4410
+    "longitude": 83.4410,
+    "map_link": "https://www.google.com/maps?q=27.7040,83.4410"
   },
   {
-    "name": "Butwal Hospital Emergency",
+    "name": "Lumbini Provincial Hospital",
     "number": "071-520401",
     "category": "Medical",
-    "description": "Emergency medical services in Butwal.",
+    "description": "Provincial hospital emergency.",
     "district": "Butwal",
     "location_text": "Butwal",
     "latitude": 27.7030,
-    "longitude": 83.4400
+    "longitude": 83.4400,
+    "map_link": "https://www.google.com/maps?q=27.7030,83.4400"
+  },
+  {
+    "name": "Universal College of Medical Sciences",
+    "number": "071-520500",
+    "category": "Medical",
+    "description": "Medical college emergency services.",
+    "district": "Butwal",
+    "location_text": "Butwal",
+    "latitude": 27.7020,
+    "longitude": 83.4390,
+    "map_link": "https://www.google.com/maps?q=27.7020,83.4390"
+  },
+  {
+    "name": "Lumbini Medical College",
+    "number": "071-520600",
+    "category": "Medical",
+    "description": "Medical college emergency services.",
+    "district": "Butwal",
+    "location_text": "Butwal",
+    "latitude": 27.7010,
+    "longitude": 83.4380,
+    "map_link": "https://www.google.com/maps?q=27.7010,83.4380"
+  },
+  {
+    "name": "Siddharthanagar City Hospital",
+    "number": "071-520700",
+    "category": "Medical",
+    "description": "City hospital emergency services.",
+    "district": "Butwal",
+    "location_text": "Siddharthanagar (Bhairahawa)",
+    "latitude": 27.4980,
+    "longitude": 83.4100,
+    "map_link": "https://www.google.com/maps?q=27.4980,83.4100"
   },
   {
     "name": "Rupandehi DM Office",
@@ -411,7 +887,19 @@
     "district": "Butwal",
     "location_text": "Butwal",
     "latitude": 27.7020,
-    "longitude": 83.4390
+    "longitude": 83.4390,
+    "map_link": "https://www.google.com/maps?q=27.7020,83.4390"
+  },
+  {
+    "name": "Nepal Red Cross Society - Lumbini Province",
+    "number": "9857061390",
+    "category": "Disaster Management",
+    "description": "Red Cross disaster relief services.",
+    "district": "Butwal",
+    "location_text": "Butwal",
+    "latitude": 27.7030,
+    "longitude": 83.4400,
+    "map_link": "https://www.google.com/maps?q=27.7030,83.4400"
   },
   {
     "name": "Butwal Women's Development Office",
@@ -421,6 +909,18 @@
     "district": "Butwal",
     "location_text": "Butwal",
     "latitude": 27.7010,
-    "longitude": 83.4380
+    "longitude": 83.4380,
+    "map_link": "https://www.google.com/maps?q=27.7010,83.4380"
+  },
+  {
+    "name": "District Women and Children Office - Rupandehi",
+    "number": "071-520701",
+    "category": "Women & Child Safety",
+    "description": "Government women and child services.",
+    "district": "Butwal",
+    "location_text": "Butwal",
+    "latitude": 27.7000,
+    "longitude": 83.4370,
+    "map_link": "https://www.google.com/maps?q=27.7000,83.4370"
   }
 ]

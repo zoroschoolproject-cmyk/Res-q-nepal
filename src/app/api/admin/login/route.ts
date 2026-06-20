@@ -3,6 +3,7 @@ import db from '@/lib/db';
 
 export async function POST(request: Request) {
   try {
+    const client = db.getClient();
     const body = await request.json();
     const { username, password } = body;
 
@@ -10,8 +11,11 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Username and password are required' }, { status: 400 });
     }
 
-    const admin = await db.prepare('SELECT * FROM admin_session WHERE username = ? COLLATE NOCASE')
-      .get(username) as any;
+    const result = await client.execute({
+      sql: 'SELECT * FROM admin_session WHERE username = ? COLLATE NOCASE',
+      args: [username]
+    });
+    const admin = result.rows[0] as any;
 
     if (!admin || admin.password !== password) {
       return NextResponse.json({ error: 'Invalid username or password' }, { status: 401 });

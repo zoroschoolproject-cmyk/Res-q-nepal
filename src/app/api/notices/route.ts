@@ -4,6 +4,7 @@ import db from '@/lib/db';
 // GET /api/notices - Retrieve notices
 export async function GET(request: Request) {
   try {
+    const client = db.getClient();
     const { searchParams } = new URL(request.url);
     const pinnedOnly = searchParams.get('pinned_only');
 
@@ -13,8 +14,8 @@ export async function GET(request: Request) {
     }
     query += ' ORDER BY is_pinned DESC, created_at DESC LIMIT 50';
 
-    const notices = await db.prepare(query).all();
-    return NextResponse.json(notices);
+    const result = await client.execute(query);
+    return NextResponse.json(result.rows);
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
@@ -30,13 +31,21 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Title and content are required' }, { status: 400 });
     }
 
-    const info = await db.prepare(`
-      INSERT INTO notices (title, content, is_pinned)
-      VALUES (?, ?, ?)
-    `).run(title, content, is_pinned ? 1 : 0);
+    const client = db.getClient();
+    await client.execute({
+      sql: 'INSERT INTO notices (title, content, is_pinned) VALUES (?, ?, ?)',
+      args: [title, content, is_pinned ? 1 : 0]
+    });
 
-    const newNotice = await db.prepare('SELECT * FROM notices WHERE id = ?').get(info.lastInsertRowid);
-    return NextResponse.json(newNotice, { status: 201 });
+    // Get last inserted row
+    const lastInsertResult = await client.execute('SELECT last_insert_rowid() as id');
+    const lastId = lastInsertResult.rows[0].id;
+    const newNoticeResult = await client.execute({
+      sql: 'SELECT * FROM notices WHERE id = ?',
+      args: [lastId]
+    });
+    
+    return NextResponse.json(newNoticeResult.rows[0], { status: 201 });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
