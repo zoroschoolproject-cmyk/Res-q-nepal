@@ -2,8 +2,9 @@
 
 import { useState } from 'react';
 import useSWR from 'swr';
-import { Heart, Search, Plus, Trash2, X, Check, Ban, Edit, MapPin } from 'lucide-react';
+import { Heart, Search, Plus, Trash2, X, Check, Ban, Edit, MapPin, Eye } from 'lucide-react';
 import { formatNPT } from '@/lib/utils';
+import { validateNepaliPhone, validateRequired } from '@/lib/validation';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -35,6 +36,7 @@ export default function AdminAidDropPage() {
   // Modal control
   const [isServiceModalOpen, setIsServiceModalOpen] = useState(false);
   const [editService, setEditService] = useState<any | null>(null);
+  const [viewDonorDetails, setViewDonorDetails] = useState<any | null>(null);
 
   // Form states for service
   const [serviceName, setServiceName] = useState('');
@@ -45,6 +47,11 @@ export default function AdminAidDropPage() {
   const [serviceLatitude, setServiceLatitude] = useState('');
   const [serviceLongitude, setServiceLongitude] = useState('');
   const [submitLoading, setSubmitLoading] = useState(false);
+  const [formErrors, setFormErrors] = useState<{
+    name?: string;
+    phone?: string;
+    district?: string;
+  }>({});
 
   // Reset pagination when tab changes
   const handleTabChange = (tab: 'blood' | 'services') => {
@@ -101,6 +108,25 @@ export default function AdminAidDropPage() {
   const handleServiceSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitLoading(true);
+    setFormErrors({});
+
+    // --- Validate ---
+    const newErrors: typeof formErrors = {};
+    if (!validateRequired(serviceName)) {
+      newErrors.name = 'Name is required';
+    }
+    if (!validateNepaliPhone(servicePhone)) {
+      newErrors.phone = 'Phone must be 98 or 97 followed by 8 digits';
+    }
+    if (!validateRequired(serviceDistrict)) {
+      newErrors.district = 'District is required';
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setFormErrors(newErrors);
+      setSubmitLoading(false);
+      return;
+    }
 
     const payload = {
       name: serviceName,
@@ -123,6 +149,7 @@ export default function AdminAidDropPage() {
       if (res.ok) {
         mutateServices();
         setIsServiceModalOpen(false);
+        setFormErrors({});
       } else {
         const err = await res.json();
         alert(err.error || 'Failed to save service');
@@ -305,27 +332,34 @@ export default function AdminAidDropPage() {
                       </span>
                     </td>
                     <td className="p-4 text-right">
-                      <div className="flex gap-2 justify-end">
-                        {d.status !== 'Approved' && (
-                          <button
-                            onClick={() => handleUpdateStatus(d.id, 'Approved')}
-                            className="p-1 text-[#16A34A] hover:bg-green-50 rounded"
-                            title="Approve"
-                          >
-                            <Check className="h-4 w-4" />
-                          </button>
-                        )}
-                        {d.status !== 'Rejected' && (
-                          <button
-                            onClick={() => handleUpdateStatus(d.id, 'Rejected')}
-                            className="p-1 text-[#D72638] hover:bg-red-50 rounded"
-                            title="Reject"
-                          >
-                            <Ban className="h-4 w-4" />
-                          </button>
-                        )}
-                      </div>
-                    </td>
+                    <div className="flex gap-2 justify-end">
+                      <button
+                        onClick={() => setViewDonorDetails(d)}
+                        className="p-1 text-[#5A6072] hover:bg-gray-100 rounded"
+                        title="View Details"
+                      >
+                        <Eye className="h-4 w-4" />
+                      </button>
+                      {d.status !== 'Approved' && (
+                        <button
+                          onClick={() => handleUpdateStatus(d.id, 'Approved')}
+                          className="p-1 text-[#16A34A] hover:bg-green-50 rounded"
+                          title="Approve"
+                        >
+                          <Check className="h-4 w-4" />
+                        </button>
+                      )}
+                      {d.status !== 'Rejected' && (
+                        <button
+                          onClick={() => handleUpdateStatus(d.id, 'Rejected')}
+                          className="p-1 text-[#D72638] hover:bg-red-50 rounded"
+                          title="Reject"
+                        >
+                          <Ban className="h-4 w-4" />
+                        </button>
+                      )}
+                    </div>
+                  </td>
                   </tr>
                 ))}
               {activeTab === 'services' &&
@@ -423,10 +457,15 @@ export default function AdminAidDropPage() {
                   type="text"
                   placeholder="e.g. Patan Hospital Blood Bank"
                   value={serviceName}
-                  onChange={(e) => setServiceName(e.target.value)}
-                  required
-                  className="bg-white border border-[#E4E7EC] rounded-md px-3 py-1.5 text-xs focus:outline-none"
+                  onChange={(e) => {
+                    setServiceName(e.target.value);
+                    if (formErrors.name) {
+                      setFormErrors(prev => ({ ...prev, name: undefined }));
+                    }
+                  }}
+                  className={`bg-white border rounded-md px-3 py-1.5 text-xs focus:outline-none ${formErrors.name ? 'border-red-500 focus:border-red-500' : 'border-[#E4E7EC]'}`}
                 />
+                {formErrors.name && <p className="text-[10px] text-red-600 font-semibold">{formErrors.name}</p>}
               </div>
 
               <div className="grid grid-cols-2 gap-3">
@@ -446,12 +485,17 @@ export default function AdminAidDropPage() {
                   <label className="text-[11px] font-bold text-[#111318]">Phone</label>
                   <input
                     type="text"
-                    placeholder="e.g. 01-5522295"
+                    placeholder="e.g. 98xxxxxxxx"
                     value={servicePhone}
-                    onChange={(e) => setServicePhone(e.target.value)}
-                    required
-                    className="bg-white border border-[#E4E7EC] rounded-md px-3 py-1.5 text-xs focus:outline-none"
+                    onChange={(e) => {
+                      setServicePhone(e.target.value);
+                      if (formErrors.phone) {
+                        setFormErrors(prev => ({ ...prev, phone: undefined }));
+                      }
+                    }}
+                    className={`bg-white border rounded-md px-3 py-1.5 text-xs focus:outline-none ${formErrors.phone ? 'border-red-500 focus:border-red-500' : 'border-[#E4E7EC]'}`}
                   />
+                  {formErrors.phone && <p className="text-[10px] text-red-600 font-semibold">{formErrors.phone}</p>}
                 </div>
               </div>
 
@@ -460,14 +504,22 @@ export default function AdminAidDropPage() {
                   <label className="text-[11px] font-bold text-[#111318]">District</label>
                   <select
                     value={serviceDistrict}
-                    onChange={(e) => setServiceDistrict(e.target.value)}
-                    className="bg-white border border-[#E4E7EC] rounded-md px-3 py-1.5 text-xs focus:outline-none"
+                    onChange={(e) => {
+                      setServiceDistrict(e.target.value);
+                      if (formErrors.district) {
+                        setFormErrors(prev => ({ ...prev, district: undefined }));
+                      }
+                    }}
+                    className={`bg-white border rounded-md px-3 py-1.5 text-xs focus:outline-none ${formErrors.district ? 'border-red-500 focus:border-red-500' : 'border-[#E4E7EC]'}`}
                   >
                     <option value="">Select District</option>
                     {DISTRICTS.filter((d) => d !== 'All').map((dist) => (
-                      <option key={dist} value={dist}>{dist}</option>
+                      <option key={dist} value={dist}>
+                        {dist}
+                      </option>
                     ))}
                   </select>
+                  {formErrors.district && <p className="text-[10px] text-red-600 font-semibold">{formErrors.district}</p>}
                 </div>
                 <div className="flex flex-col gap-1">
                   <label className="text-[11px] font-bold text-[#111318]">Location</label>
@@ -514,6 +566,76 @@ export default function AdminAidDropPage() {
                 {submitLoading ? 'Saving...' : 'Save Service'}
               </button>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Donor Details Modal */}
+      {viewDonorDetails && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-50 animate-in fade-in duration-200">
+          <div className="bg-white rounded-xl border border-[#E4E7EC] shadow-lg max-w-md w-full p-6 relative animate-in scale-in duration-300">
+            <div className="flex justify-between items-center pb-3 border-b border-[#E4E7EC] mb-4">
+              <h3 className="font-bold text-sm text-[#111318]">Donor Details</h3>
+              <button
+                onClick={() => setViewDonorDetails(null)}
+                className="p-1 rounded-full text-[#5A6072] hover:bg-[#F7F8FA]"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <div className="flex flex-col gap-4 text-xs">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <span className="text-[#9AA0AD] font-mono block mb-1">Full Name</span>
+                  <span className="font-bold text-[#111318]">{viewDonorDetails.name}</span>
+                </div>
+                <div>
+                  <span className="text-[#9AA0AD] font-mono block mb-1">Blood Group</span>
+                  <span className="font-bold text-[#D72638]">{viewDonorDetails.blood_group}</span>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <span className="text-[#9AA0AD] font-mono block mb-1">Phone</span>
+                  <span className="font-mono">{viewDonorDetails.contact}</span>
+                </div>
+                <div>
+                  <span className="text-[#9AA0AD] font-mono block mb-1">Email</span>
+                  <span>{viewDonorDetails.email || '—'}</span>
+                </div>
+              </div>
+
+              <div>
+                <span className="text-[#9AA0AD] font-mono block mb-1">Address</span>
+                <span>{viewDonorDetails.address || '—'}</span>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <span className="text-[#9AA0AD] font-mono block mb-1">City/District</span>
+                  <span>{viewDonorDetails.city || '—'}</span>
+                </div>
+                <div>
+                  <span className="text-[#9AA0AD] font-mono block mb-1">Emergency Contact</span>
+                  <span>{viewDonorDetails.emergency_contact || '—'}</span>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <span className="text-[#9AA0AD] font-mono block mb-1">Registered On</span>
+                  <span className="font-mono">{formatNPT(viewDonorDetails.created_at)}</span>
+                </div>
+                <div>
+                  <span className="text-[#9AA0AD] font-mono block mb-1">Status</span>
+                  <span className={`px-2 py-0.5 border rounded-full text-[10px] font-mono ${getStatusBadge(viewDonorDetails.status)}`}>
+                    {viewDonorDetails.status}
+                  </span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       )}

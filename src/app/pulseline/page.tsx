@@ -3,7 +3,7 @@
 import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import useSWR from 'swr';
-import { Search, Star, Phone, Copy, Check, Info, X, MapPin, LocateFixed, Navigation } from 'lucide-react';
+import { Search, Star, Phone, Copy, Check, Info, X, MapPin, Navigation } from 'lucide-react';
 import dynamic from 'next/dynamic';
 
 // Dynamically import Leaflet components with no SSR to avoid window errors
@@ -27,21 +27,6 @@ const CATEGORIES = [
 
 const SOS_CATEGORIES = ['Police', 'Fire Brigade', 'Medical', 'Disaster Management', 'Women & Child Safety'];
 
-// Helper function to calculate distance between two coordinates (Haversine formula)
-const calculateDistance = (lat1: number, lng1: number, lat2: number, lng2: number): number => {
-  const R = 6371; // Earth radius in km
-  const dLat = (lat2 - lat1) * (Math.PI / 180);
-  const dLng = (lng2 - lng1) * (Math.PI / 180);
-  const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(lat1 * (Math.PI / 180)) *
-      Math.cos(lat2 * (Math.PI / 180)) *
-      Math.sin(dLng / 2) *
-      Math.sin(dLng / 2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return R * c;
-};
-
 const DISTRICTS = [
   'All',
   'Kathmandu',
@@ -52,24 +37,6 @@ const DISTRICTS = [
   'Biratnagar',
   'Butwal',
 ];
-
-// Helper function to extract district from Nominatim address
-const extractDistrict = (address: any): string | null => {
-  // Possible district keys in Nominatim response
-  const districtKeys = ['county', 'state_district', 'district'];
-  for (const key of districtKeys) {
-    if (address[key]) {
-      // Extract district name (remove "District" suffix if present)
-      let districtName = address[key].replace(/\s*District$/i, '').trim();
-      // Check against our DISTRICTS array (case insensitive)
-      const matchedDistrict = DISTRICTS.find(d => d.toLowerCase() === districtName.toLowerCase());
-      if (matchedDistrict) {
-        return matchedDistrict;
-      }
-    }
-  }
-  return null;
-};
 
 function PulseLineContent() {
   const searchParams = useSearchParams();
@@ -82,10 +49,7 @@ function PulseLineContent() {
   const [favourites, setFavourites] = useState<number[]>([]);
   const [copiedId, setCopiedId] = useState<number | null>(null);
   const [selectedContact, setSelectedContact] = useState<any | null>(null);
-  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
-  const [mapCenter, setMapCenter] = useState<{ lat: number; lng: number }>({ lat: 27.7172, lng: 85.3240 });
-  const [isLocating, setIsLocating] = useState(false);
-  const [detectedDistrict, setDetectedDistrict] = useState<string | null>(null);
+  const [mapCenter] = useState<{ lat: number; lng: number }>({ lat: 27.7172, lng: 85.3240 });
 
   // Fetch contacts with SWR
   const { data: contacts = [], error, isLoading } = useSWR('/api/contacts', fetcher, {
@@ -108,62 +72,6 @@ function PulseLineContent() {
     }
   }, []);
 
-  // SOS mode initialization: request geolocation and reverse geocode
-  useEffect(() => {
-    if (isSOSMode && !userLocation) {
-      setIsLocating(true);
-      if (!navigator.geolocation) {
-        alert('Geolocation is not supported by your browser.');
-        setIsLocating(false);
-        return;
-      }
-      navigator.geolocation.getCurrentPosition(
-        async (position) => {
-          const loc = {
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-          };
-          setUserLocation(loc);
-          setMapCenter(loc);
-          
-          // Reverse geocode using Nominatim to get location text and district
-          try {
-            const response = await fetch(
-              `https://nominatim.openstreetmap.org/reverse?format=json&lat=${loc.lat}&lon=${loc.lng}&zoom=18&addressdetails=1`,
-              {
-                headers: {
-                  'User-Agent': 'ResQ Nepal (https://resq-nepal.app)',
-                },
-              }
-            );
-            if (response.ok) {
-              const data = await response.json();
-              if (data.display_name) {
-                setLocationSearch(data.display_name);
-              }
-              if (data.address) {
-                const district = extractDistrict(data.address);
-                if (district) {
-                  setDetectedDistrict(district);
-                  setSelectedDistrict(district);
-                }
-              }
-            }
-          } catch (err) {
-            console.error('Reverse geocoding error:', err);
-          }
-
-          setIsLocating(false);
-        },
-        (error) => {
-          console.error('Geolocation error:', error);
-          alert('Unable to retrieve your location.');
-          setIsLocating(false);
-        }
-      );
-    }
-  }, [isSOSMode, userLocation]);
-
   const toggleFavourite = (id: number) => {
     let updated: number[];
     if (favourites.includes(id)) {
@@ -179,52 +87,6 @@ function PulseLineContent() {
     navigator.clipboard.writeText(num);
     setCopiedId(id);
     setTimeout(() => setCopiedId(null), 2000);
-  };
-
-  const getLocation = () => {
-    setIsLocating(true);
-    if (!navigator.geolocation) {
-      alert('Geolocation is not supported by your browser.');
-      setIsLocating(false);
-      return;
-    }
-    navigator.geolocation.getCurrentPosition(
-      async (position) => {
-        const loc = {
-          lat: position.coords.latitude,
-          lng: position.coords.longitude,
-        };
-        setUserLocation(loc);
-        setMapCenter(loc);
-        
-        // Reverse geocode using Nominatim to get location text
-        try {
-          const response = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${loc.lat}&lon=${loc.lng}&zoom=18&addressdetails=1`,
-            {
-              headers: {
-                'User-Agent': 'ResQ Nepal (https://resq-nepal.app)',
-              },
-            }
-          );
-          if (response.ok) {
-            const data = await response.json();
-            if (data.display_name) {
-              setLocationSearch(data.display_name);
-            }
-          }
-        } catch (err) {
-          console.error('Reverse geocoding error:', err);
-        }
-
-        setIsLocating(false);
-      },
-      (error) => {
-        console.error('Geolocation error:', error);
-        alert('Unable to retrieve your location.');
-        setIsLocating(false);
-      }
-    );
   };
 
   // Filter contacts logic
@@ -245,29 +107,6 @@ function PulseLineContent() {
 
     return matchesSearch && matchesLocationSearch && matchesCategory && matchesDistrict && matchesSOSCategory;
   });
-
-  // Sort in SOS mode: National first, then same district, then nearest
-  if (isSOSMode && userLocation) {
-    filteredContacts = [...filteredContacts].sort((a, b) => {
-      // 1. National emergency numbers (district === 'All') come first
-      if (a.district === 'All' && b.district !== 'All') return -1;
-      if (b.district === 'All' && a.district !== 'All') return 1;
-      
-      // 2. If we have a detected district, same district comes next
-      if (detectedDistrict) {
-        if (a.district === detectedDistrict && b.district !== detectedDistrict) return -1;
-        if (b.district === detectedDistrict && a.district !== detectedDistrict) return 1;
-      }
-      
-      // 3. Then sort by distance
-      if (!a.latitude || !a.longitude) return 1;
-      if (!b.latitude || !b.longitude) return -1;
-      
-      const distA = calculateDistance(userLocation.lat, userLocation.lng, a.latitude, a.longitude);
-      const distB = calculateDistance(userLocation.lat, userLocation.lng, b.latitude, b.longitude);
-      return distA - distB;
-    });
-  }
 
   // Separate favourites
   const favouriteContacts = filteredContacts.filter((c: any) => favourites.includes(c.id));
@@ -295,30 +134,17 @@ function PulseLineContent() {
       {/* Sticky Search and Filter Controls */}
       <div className="sticky top-14 bg-[#F7F8FA] pt-2 pb-4 z-20 flex flex-col gap-3">
         {/* Search Input */}
-        <div className="flex gap-2">
-          <div className="relative flex-1">
-            <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#9AA0AD]">
-              <Search className="h-4 w-4" />
-            </span>
-            <input
-              type="text"
-              placeholder="Search contacts by name, number, description..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-white border border-[#E4E7EC] rounded-lg pl-10 pr-4 py-2.5 text-xs text-[#111318] placeholder-[#9AA0AD] focus:outline-none focus:border-[#1B4FD8] focus:ring-1 focus:ring-[#1B4FD8] transition-colors shadow-[0_1px_3px_rgba(0,0,0,0.02)]"
-            />
-          </div>
-          <button
-            onClick={getLocation}
-            disabled={isLocating}
-            className="flex items-center justify-center gap-1 px-3 py-2.5 bg-white border border-[#E4E7EC] rounded-lg text-[#5A6072] hover:bg-[#F7F8FA] transition-all"
-          >
-            {isLocating ? (
-              <div className="animate-spin h-4 w-4 border-2 border-[#1B4FD8] border-t-transparent rounded-full" />
-            ) : (
-              <LocateFixed className="h-4 w-4" />
-            )}
-          </button>
+        <div className="relative flex-1">
+          <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#9AA0AD]">
+            <Search className="h-4 w-4" />
+          </span>
+          <input
+            type="text"
+            placeholder="Search contacts by name, number, description..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full bg-white border border-[#E4E7EC] rounded-lg pl-10 pr-4 py-2.5 text-xs text-[#111318] placeholder-[#9AA0AD] focus:outline-none focus:border-[#1B4FD8] focus:ring-1 focus:ring-[#1B4FD8] transition-colors shadow-[0_1px_3px_rgba(0,0,0,0.02)]"
+          />
         </div>
 
         {/* Location Search */}
@@ -384,11 +210,6 @@ function PulseLineContent() {
                   attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                   url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
-                {userLocation && (
-                  <Marker position={userLocation}>
-                    <Popup>You are here!</Popup>
-                  </Marker>
-                )}
                 {contactsWithLocation.map((c: any) => (
                   <Marker
                     key={c.id}
@@ -442,7 +263,6 @@ function PulseLineContent() {
                     onFavToggle={toggleFavourite}
                     onCopy={copyNumber}
                     onDetailClick={setSelectedContact}
-                    userLocation={userLocation}
                   />
                 ))}
               </div>
@@ -471,7 +291,6 @@ function PulseLineContent() {
                     onFavToggle={toggleFavourite}
                     onCopy={copyNumber}
                     onDetailClick={setSelectedContact}
-                    userLocation={userLocation}
                   />
                 ))}
               </div>
@@ -578,10 +397,9 @@ interface CardProps {
   onFavToggle: (id: number) => void;
   onCopy: (num: string, id: number) => void;
   onDetailClick: (c: any) => void;
-  userLocation: { lat: number; lng: number } | null;
 }
 
-function ContactCard({ contact, isFav, copiedId, onFavToggle, onCopy, onDetailClick, userLocation }: CardProps) {
+function ContactCard({ contact, isFav, copiedId, onFavToggle, onCopy, onDetailClick }: CardProps) {
   return (
     <div className="relative group bg-white border border-[#E4E7EC] rounded-xl p-5 shadow-[0_1px_4px_rgba(0,0,0,0.06)] hover:-translate-y-0.5 hover:shadow-md transition-all duration-150">
       

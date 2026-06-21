@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import useSWR from 'swr';
-import { MessageSquare, Search, ClipboardList, X } from 'lucide-react';
+import { MessageSquare, Search, ClipboardList, X, Eye, MapPin, Copy, ExternalLink } from 'lucide-react';
 import { formatNPT } from '@/lib/utils';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
@@ -30,6 +30,9 @@ export default function AdminVoiceBoxPage() {
   const [responseStatus, setResponseStatus] = useState('Submitted');
   const [adminResponse, setAdminResponse] = useState('');
   const [submitLoading, setSubmitLoading] = useState(false);
+  
+  // View details modal state
+  const [viewingComplaint, setViewingComplaint] = useState<any | null>(null);
 
   // Open Response Modal
   const openResponseModal = (comp: any) => {
@@ -177,12 +180,21 @@ export default function AdminVoiceBoxPage() {
                   </td>
                   <td className="p-4 font-mono text-[#9AA0AD]">{formatNPT(c.created_at)}</td>
                   <td className="p-4 text-right">
-                    <button
-                      onClick={() => openResponseModal(c)}
-                      className="flex items-center gap-1.5 px-3 py-1.5 bg-[#1B4FD8] hover:bg-[#1B4FD8]/95 text-white font-bold text-xs rounded-md shadow-sm transition-colors ml-auto"
-                    >
-                      Respond
-                    </button>
+                    <div className="flex items-center gap-2 justify-end">
+                      <button
+                        onClick={() => setViewingComplaint(c)}
+                        className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs rounded-md shadow-sm transition-colors"
+                      >
+                        <Eye className="h-3 w-3" />
+                        View Details
+                      </button>
+                      <button
+                        onClick={() => openResponseModal(c)}
+                        className="flex items-center gap-1.5 px-3 py-1.5 bg-[#1B4FD8] hover:bg-[#1B4FD8]/95 text-white font-bold text-xs rounded-md shadow-sm transition-colors"
+                      >
+                        Respond
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -277,6 +289,144 @@ export default function AdminVoiceBoxPage() {
           </div>
         </div>
       )}
+
+      {/* View Details Modal */}
+      {viewingComplaint && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-50 animate-in fade-in duration-200">
+          <div className="bg-white rounded-xl border border-[#E4E7EC] shadow-lg max-w-lg w-full p-6 relative animate-in scale-in duration-300 max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center pb-3 border-b border-[#E4E7EC] mb-4">
+              <h3 className="font-bold text-sm text-[#111318] flex items-center gap-1.5">
+                Complaint Details
+              </h3>
+              <button
+                onClick={() => setViewingComplaint(null)}
+                className="p-1 rounded-full text-[#5A6072] hover:bg-[#F7F8FA]"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <div className="flex flex-col gap-4">
+              {/* Complaint ID */}
+              <div className="flex flex-col gap-1">
+                <span className="text-[10px] font-mono text-[#9AA0AD] uppercase">Complaint ID</span>
+                <div className="flex items-center gap-2">
+                  <span className="font-mono font-bold text-[#111318]">{viewingComplaint.complaint_id}</span>
+                  <button
+                    onClick={() => {
+                      navigator.clipboard.writeText(viewingComplaint.complaint_id);
+                    }}
+                    className="p-1 text-[#5A6072] hover:bg-gray-100 rounded"
+                    title="Copy ID"
+                  >
+                    <Copy className="h-3 w-3" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Subject */}
+              <div className="flex flex-col gap-1">
+                <span className="text-[10px] font-mono text-[#9AA0AD] uppercase">Subject</span>
+                <span className="font-bold text-[#111318]">{viewingComplaint.subject}</span>
+              </div>
+
+              {/* Category */}
+              <div className="flex flex-col gap-1">
+                <span className="text-[10px] font-mono text-[#9AA0AD] uppercase">Category</span>
+                <span className="text-[#111318]">{viewingComplaint.category}</span>
+              </div>
+
+              {/* Description */}
+              <div className="flex flex-col gap-1">
+                <span className="text-[10px] font-mono text-[#9AA0AD] uppercase">Description</span>
+                <p className="text-xs text-[#5A6072] leading-relaxed">{viewingComplaint.description}</p>
+              </div>
+
+              {/* Complainant Info */}
+              <div className="flex flex-col gap-1">
+                <span className="text-[10px] font-mono text-[#9AA0AD] uppercase">Complainant</span>
+                {viewingComplaint.is_anonymous ? (
+                  <span className="text-xs text-[#5A6072]">Anonymous</span>
+                ) : (
+                  <div className="text-xs text-[#111318]">
+                    <p>Name: {viewingComplaint.complainant_name}</p>
+                    <p>Phone: {viewingComplaint.complainant_phone}</p>
+                  </div>
+                )}
+              </div>
+
+              {/* Location */}
+              <div className="flex flex-col gap-1">
+                <span className="text-[10px] font-mono text-[#9AA0AD] uppercase">Location</span>
+                <div className="text-xs text-[#111318]">
+                  {viewingComplaint.location_text && <p className="flex items-center gap-1"><MapPin className="h-3 w-3" />{viewingComplaint.location_text}</p>}
+                  {viewingComplaint.district && <p>District: {viewingComplaint.district}</p>}
+                  {viewingComplaint.latitude && viewingComplaint.longitude && (
+                    <a
+                      href={`https://www.openstreetmap.org/?mlat=${viewingComplaint.latitude}&mlon=${viewingComplaint.longitude}#map=15/${viewingComplaint.latitude}/${viewingComplaint.longitude}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-1 text-[#1B4FD8] hover:underline mt-1"
+                    >
+                      <ExternalLink className="h-3 w-3" /> View on Map
+                    </a>
+                  )}
+                </div>
+              </div>
+
+              {/* Image */}
+              {viewingComplaint.image_path && (
+                <div className="flex flex-col gap-1">
+                  <span className="text-[10px] font-mono text-[#9AA0AD] uppercase">Image</span>
+                  <img
+                    src={viewingComplaint.image_path}
+                    alt="Complaint"
+                    className="w-full h-48 object-cover rounded-md border border-[#E4E7EC]"
+                  />
+                </div>
+              )}
+
+              {/* Status */}
+              <div className="flex flex-col gap-1">
+                <span className="text-[10px] font-mono text-[#9AA0AD] uppercase">Status</span>
+                <span className={`px-2.5 py-0.5 border rounded-full text-[10px] font-mono w-fit ${getComplaintStatusBadge(viewingComplaint.status)}`}>
+                  {viewingComplaint.status}
+                </span>
+              </div>
+
+              {/* Admin Response */}
+              {viewingComplaint.admin_response && (
+                <div className="flex flex-col gap-1">
+                  <span className="text-[10px] font-mono text-[#9AA0AD] uppercase">Admin Response</span>
+                  <p className="text-xs text-[#111318] leading-relaxed bg-[#F7F8FA] border border-[#E4E7EC] rounded-md p-3">
+                    {viewingComplaint.admin_response}
+                  </p>
+                </div>
+              )}
+
+              {/* Created Date */}
+              <div className="flex flex-col gap-1">
+                <span className="text-[10px] font-mono text-[#9AA0AD] uppercase">Created At</span>
+                <span className="text-xs text-[#5A6072] font-mono">{formatNPT(viewingComplaint.created_at, 'full')}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
+}
+
+// Helper function to get status badge
+function getComplaintStatusBadge(status: string) {
+  switch (status) {
+    case 'Submitted':
+      return 'bg-[#FEF3C7] text-[#D97706] border-yellow-200';
+    case 'Under Review':
+      return 'bg-[#DBEAFE] text-[#1B4FD8] border-blue-200';
+    case 'Resolved':
+      return 'bg-[#DCFCE7] text-[#16A34A] border-green-200';
+    default:
+      return 'bg-gray-100 text-gray-700 border-gray-200';
+  }
 }

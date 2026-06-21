@@ -9,6 +9,8 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@capacitor/cli": "^8.4.1",
+    "@capacitor/core": "^8.4.1",
     "@libsql/client": "^0.17.3",
     "better-sqlite3": "^12.10.0",
     "clsx": "^2.1.1",

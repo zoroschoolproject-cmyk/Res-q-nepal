@@ -4,7 +4,9 @@ import { useState, useEffect } from 'react';
 import useSWR from 'swr';
 import { ShieldAlert, FileText, Search, UserCheck, Send, MapPin, User } from 'lucide-react';
 import { formatNPT } from '@/lib/utils';
-import LocationInput, { LocationData, extractDistrict } from '@/components/LocationInput';
+import LocationInput, { LocationData } from '@/components/LocationInput';
+import {
+  validateNepaliPhone, validateRequired, validateImageFile } from '@/lib/validation';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -28,6 +30,17 @@ export default function VoiceBoxPage() {
   const [lodgeSuccess, setLodgeSuccess] = useState<any | null>(null);
   const [lodgeError, setLodgeError] = useState<string | null>(null);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  
+  // --- Validation errors ---
+  const [errors, setErrors] = useState<{
+    subject?: string;
+    complaintCategory?: string;
+    complaintDesc?: string;
+    complainantName?: string;
+    complainantPhone?: string;
+    locationText?: string;
+    image?: string;
+  }>({});
 
   // --- Status Checker States ---
   const [checkId, setCheckId] = useState('');
@@ -54,6 +67,44 @@ export default function VoiceBoxPage() {
     setIsLodging(true);
     setLodgeSuccess(null);
     setLodgeError(null);
+    setErrors({});
+
+    // --- Validate ---
+    const newErrors: typeof errors = {};
+    if (!validateRequired(subject)) {
+      newErrors.subject = 'Subject is required';
+    }
+    if (!validateRequired(complaintCategory)) {
+      newErrors.complaintCategory = 'Category is required';
+    }
+    if (!validateRequired(complaintDesc)) {
+      newErrors.complaintDesc = 'Description is required';
+    }
+    if (!isAnonymous) {
+      if (!validateRequired(complainantName)) {
+        newErrors.complainantName = 'Name is required';
+      }
+      if (!validateNepaliPhone(complainantPhone)) {
+        newErrors.complainantPhone = 'Phone must be 98 or 97 followed by 8 digits';
+      }
+    }
+    if (!validateRequired(locationData.locationText)) {
+      newErrors.locationText = 'Location is required';
+    }
+    if (!selectedImage) {
+      newErrors.image = 'Image is required';
+    } else {
+      const imageValidation = validateImageFile(selectedImage);
+      if (!imageValidation.valid) {
+        newErrors.image = imageValidation.message;
+      }
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      setIsLodging(false);
+      return;
+    }
 
     try {
       const formData = new FormData();
@@ -102,6 +153,7 @@ export default function VoiceBoxPage() {
         longitude: null,
       });
       setSelectedImage(null);
+      setErrors({});
     } catch (err: any) {
       setLodgeError(err.message || 'Error filing complaint.');
     } finally {
@@ -216,9 +268,15 @@ export default function VoiceBoxPage() {
                       type="text"
                       placeholder="e.g. Ram Shrestha"
                       value={complainantName}
-                      onChange={(e) => setComplainantName(e.target.value)}
-                      className="bg-white border border-[#E4E7EC] rounded-md px-3 py-2 text-xs text-[#111318] focus:outline-none focus:border-[#1B4FD8]"
+                      onChange={(e) => {
+                        setComplainantName(e.target.value);
+                        if (errors.complainantName) {
+                          setErrors(prev => ({ ...prev, complainantName: undefined }));
+                        }
+                      }}
+                      className={`bg-white border rounded-md px-3 py-2 text-xs text-[#111318] focus:outline-none ${errors.complainantName ? 'border-red-500 focus:border-red-500' : 'border-[#E4E7EC] focus:border-[#1B4FD8]'}`}
                     />
+                    {errors.complainantName && <p className="text-[10px] text-red-600 font-semibold">{errors.complainantName}</p>}
                   </div>
 
                   <div className="flex flex-col gap-1.5">
@@ -227,9 +285,15 @@ export default function VoiceBoxPage() {
                       type="text"
                       placeholder="e.g. 98xxxxxxxx"
                       value={complainantPhone}
-                      onChange={(e) => setComplainantPhone(e.target.value)}
-                      className="bg-white border border-[#E4E7EC] rounded-md px-3 py-2 text-xs text-[#111318] focus:outline-none focus:border-[#1B4FD8]"
+                      onChange={(e) => {
+                        setComplainantPhone(e.target.value);
+                        if (errors.complainantPhone) {
+                          setErrors(prev => ({ ...prev, complainantPhone: undefined }));
+                        }
+                      }}
+                      className={`bg-white border rounded-md px-3 py-2 text-xs text-[#111318] focus:outline-none ${errors.complainantPhone ? 'border-red-500 focus:border-red-500' : 'border-[#E4E7EC] focus:border-[#1B4FD8]'}`}
                     />
+                    {errors.complainantPhone && <p className="text-[10px] text-red-600 font-semibold">{errors.complainantPhone}</p>}
                   </div>
                 </>
               )}
@@ -240,18 +304,28 @@ export default function VoiceBoxPage() {
                   type="text"
                   placeholder="e.g. Pipeline leak in Ward 4"
                   value={subject}
-                  onChange={(e) => setSubject(e.target.value)}
-                  required
-                  className="bg-white border border-[#E4E7EC] rounded-md px-3 py-2 text-xs text-[#111318] focus:outline-none focus:border-[#1B4FD8]"
+                  onChange={(e) => {
+                    setSubject(e.target.value);
+                    if (errors.subject) {
+                      setErrors(prev => ({ ...prev, subject: undefined }));
+                    }
+                  }}
+                  className={`bg-white border rounded-md px-3 py-2 text-xs text-[#111318] focus:outline-none ${errors.subject ? 'border-red-500 focus:border-red-500' : 'border-[#E4E7EC] focus:border-[#1B4FD8]'}`}
                 />
+                {errors.subject && <p className="text-[10px] text-red-600 font-semibold">{errors.subject}</p>}
               </div>
 
               <div className="flex flex-col gap-1.5">
                 <label className="text-xs font-bold text-[#111318]">Category</label>
                 <select
                   value={complaintCategory}
-                  onChange={(e) => setComplaintCategory(e.target.value)}
-                  className="bg-white border border-[#E4E7EC] rounded-md px-3 py-2 text-xs text-[#111318] focus:outline-none focus:border-[#1B4FD8]"
+                  onChange={(e) => {
+                    setComplaintCategory(e.target.value);
+                    if (errors.complaintCategory) {
+                      setErrors(prev => ({ ...prev, complaintCategory: undefined }));
+                    }
+                  }}
+                  className={`bg-white border rounded-md px-3 py-2 text-xs text-[#111318] focus:outline-none ${errors.complaintCategory ? 'border-red-500 focus:border-red-500' : 'border-[#E4E7EC] focus:border-[#1B4FD8]'}`}
                 >
                   {COMPLAINT_CATEGORIES.map((cat) => (
                     <option key={cat} value={cat}>
@@ -259,13 +333,19 @@ export default function VoiceBoxPage() {
                     </option>
                   ))}
                 </select>
+                {errors.complaintCategory && <p className="text-[10px] text-red-600 font-semibold">{errors.complaintCategory}</p>}
               </div>
 
               <div className="flex flex-col gap-1.5">
                 <label className="text-xs font-bold text-[#111318]">Location</label>
                 <LocationInput
                   value={locationData}
-                  onChange={setLocationData}
+                  onChange={(newData) => {
+                    setLocationData(newData);
+                    if (errors.locationText) {
+                      setErrors(prev => ({ ...prev, locationText: undefined }));
+                    }
+                  }}
                   placeholder="e.g. Patan Dhoka, Lalitpur"
                 />
                 {locationData.latitude && locationData.longitude && (
@@ -273,6 +353,7 @@ export default function VoiceBoxPage() {
                     Lat: {parseFloat(locationData.latitude.toString()).toFixed(4)}, Lon: {parseFloat(locationData.longitude.toString()).toFixed(4)}
                   </p>
                 )}
+                {errors.locationText && <p className="text-[10px] text-red-600 font-semibold">{errors.locationText}</p>}
               </div>
 
               <div className="flex flex-col gap-1.5">
@@ -281,19 +362,29 @@ export default function VoiceBoxPage() {
                   placeholder="Provide details about the utility breakdown, local hazard, or public service delay..."
                   rows={4}
                   value={complaintDesc}
-                  onChange={(e) => setComplaintDesc(e.target.value)}
-                  required
-                  className="bg-white border border-[#E4E7EC] rounded-md px-3 py-2 text-xs text-[#111318] focus:outline-none focus:border-[#1B4FD8] resize-none"
+                  onChange={(e) => {
+                    setComplaintDesc(e.target.value);
+                    if (errors.complaintDesc) {
+                      setErrors(prev => ({ ...prev, complaintDesc: undefined }));
+                    }
+                  }}
+                  className={`bg-white border rounded-md px-3 py-2 text-xs text-[#111318] focus:outline-none resize-none ${errors.complaintDesc ? 'border-red-500 focus:border-red-500' : 'border-[#E4E7EC] focus:border-[#1B4FD8]'}`}
                 />
+                {errors.complaintDesc && <p className="text-[10px] text-red-600 font-semibold">{errors.complaintDesc}</p>}
               </div>
 
               <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-bold text-[#111318]">Upload Image (Optional)</label>
+                <label className="text-xs font-bold text-[#111318]">Upload Image</label>
                 <input
                   type="file"
-                  accept="image/*"
-                  onChange={(e) => setSelectedImage(e.target.files?.[0] || null)}
-                  className="bg-white border border-[#E4E7EC] rounded-md px-3 py-2 text-xs text-[#111318] focus:outline-none focus:border-[#1B4FD8] file:mr-2 file:py-1 file:px-2 file:border-0 file:rounded file:bg-[#1B4FD8] file:text-white file:text-xs file:cursor-pointer"
+                  accept="image/jpeg,image/png,image/webp"
+                  onChange={(e) => {
+                    setSelectedImage(e.target.files?.[0] || null);
+                    if (errors.image) {
+                      setErrors(prev => ({ ...prev, image: undefined }));
+                    }
+                  }}
+                  className={`bg-white border rounded-md px-3 py-2 text-xs text-[#111318] focus:outline-none file:mr-2 file:py-1 file:px-2 file:border-0 file:rounded file:bg-[#1B4FD8] file:text-white file:text-xs file:cursor-pointer ${errors.image ? 'border-red-500 focus:border-red-500' : 'border-[#E4E7EC] focus:border-[#1B4FD8]'}`}
                 />
                 {selectedImage && (
                   <div className="mt-2">
@@ -311,6 +402,7 @@ export default function VoiceBoxPage() {
                     </button>
                   </div>
                 )}
+                {errors.image && <p className="text-[10px] text-red-600 font-semibold">{errors.image}</p>}
               </div>
 
               {lodgeError && <p className="text-xs text-[#DC2626] font-semibold">{lodgeError}</p>}

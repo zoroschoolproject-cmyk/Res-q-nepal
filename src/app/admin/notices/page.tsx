@@ -4,6 +4,7 @@ import { useState } from 'react';
 import useSWR from 'swr';
 import { ClipboardList, Search, Plus, Edit, Trash2, X, Pin, PinOff } from 'lucide-react';
 import { formatNPT } from '@/lib/utils';
+import { validateRequired } from '@/lib/validation';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -31,6 +32,10 @@ export default function AdminNoticesPage() {
   const [noticeContent, setNoticeContent] = useState('');
   const [noticeIsPinned, setNoticeIsPinned] = useState(false);
   const [submitLoading, setSubmitLoading] = useState(false);
+  const [formErrors, setFormErrors] = useState<{
+    title?: string;
+    content?: string;
+  }>({});
 
   const openAddModal = () => {
     setEditNotice(null);
@@ -51,6 +56,22 @@ export default function AdminNoticesPage() {
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitLoading(true);
+    setFormErrors({});
+
+    // --- Validate ---
+    const newErrors: typeof formErrors = {};
+    if (!validateRequired(noticeTitle)) {
+      newErrors.title = 'Title is required';
+    }
+    if (!validateRequired(noticeContent)) {
+      newErrors.content = 'Content is required';
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setFormErrors(newErrors);
+      setSubmitLoading(false);
+      return;
+    }
 
     const payload = {
       title: noticeTitle,
@@ -71,6 +92,7 @@ export default function AdminNoticesPage() {
       if (res.ok) {
         mutate();
         setIsModalOpen(false);
+        setFormErrors({});
       } else {
         const err = await res.json();
         alert(err.error || 'Failed to save notice bulletin');
@@ -282,10 +304,15 @@ export default function AdminNoticesPage() {
                   type="text"
                   placeholder="e.g. Monsoon Precaution Advisory"
                   value={noticeTitle}
-                  onChange={(e) => setNoticeTitle(e.target.value)}
-                  required
-                  className="bg-white border border-[#E4E7EC] rounded-md px-3 py-1.5 text-xs focus:outline-none"
+                  onChange={(e) => {
+                    setNoticeTitle(e.target.value);
+                    if (formErrors.title) {
+                      setFormErrors(prev => ({ ...prev, title: undefined }));
+                    }
+                  }}
+                  className={`bg-white border rounded-md px-3 py-1.5 text-xs focus:outline-none ${formErrors.title ? 'border-red-500 focus:border-red-500' : 'border-[#E4E7EC]'}`}
                 />
+                {formErrors.title && <p className="text-[10px] text-red-600 font-semibold">{formErrors.title}</p>}
               </div>
 
               <div className="flex flex-col gap-1">
@@ -294,10 +321,15 @@ export default function AdminNoticesPage() {
                   placeholder="Details regarding the emergency announcement..."
                   rows={4}
                   value={noticeContent}
-                  onChange={(e) => setNoticeContent(e.target.value)}
-                  required
-                  className="bg-white border border-[#E4E7EC] rounded-md px-3 py-1.5 text-xs focus:outline-none resize-none"
+                  onChange={(e) => {
+                    setNoticeContent(e.target.value);
+                    if (formErrors.content) {
+                      setFormErrors(prev => ({ ...prev, content: undefined }));
+                    }
+                  }}
+                  className={`bg-white border rounded-md px-3 py-1.5 text-xs focus:outline-none resize-none ${formErrors.content ? 'border-red-500 focus:border-red-500' : 'border-[#E4E7EC]'}`}
                 />
+                {formErrors.content && <p className="text-[10px] text-red-600 font-semibold">{formErrors.content}</p>}
               </div>
 
               <div className="flex items-center justify-between border-t border-[#E4E7EC] pt-3">

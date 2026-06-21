@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Logo from '@/components/Logo';
 import { Shield, KeyRound, User, AlertCircle } from 'lucide-react';
+import { validateRequired } from '@/lib/validation';
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -12,11 +13,31 @@ export default function AdminLoginPage() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [formErrors, setFormErrors] = useState<{
+    username?: string;
+    password?: string;
+  }>({});
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
+    setFormErrors({});
+
+    // --- Validate ---
+    const newErrors: typeof formErrors = {};
+    if (!validateRequired(username)) {
+      newErrors.username = 'Username is required';
+    }
+    if (!validateRequired(password)) {
+      newErrors.password = 'Password is required';
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setFormErrors(newErrors);
+      setLoading(false);
+      return;
+    }
 
     try {
       const res = await fetch('/api/admin/login', {
@@ -62,10 +83,15 @@ export default function AdminLoginPage() {
               type="text"
               placeholder="Enter admin username"
               value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              required
-              className="bg-white border border-[#E4E7EC] rounded-md px-3 py-2 text-xs text-[#111318] focus:outline-none focus:border-[#1B4FD8]"
+              onChange={(e) => {
+                setUsername(e.target.value);
+                if (formErrors.username) {
+                  setFormErrors(prev => ({ ...prev, username: undefined }));
+                }
+              }}
+              className={`bg-white border rounded-md px-3 py-2 text-xs text-[#111318] focus:outline-none ${formErrors.username ? 'border-red-500 focus:border-red-500' : 'border-[#E4E7EC] focus:border-[#1B4FD8]'}`}
             />
+            {formErrors.username && <p className="text-[10px] text-red-600 font-semibold">{formErrors.username}</p>}
           </div>
 
           <div className="flex flex-col gap-1.5">
@@ -76,10 +102,15 @@ export default function AdminLoginPage() {
               type="password"
               placeholder="Enter password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="bg-white border border-[#E4E7EC] rounded-md px-3 py-2 text-xs text-[#111318] focus:outline-none focus:border-[#1B4FD8]"
+              onChange={(e) => {
+                setPassword(e.target.value);
+                if (formErrors.password) {
+                  setFormErrors(prev => ({ ...prev, password: undefined }));
+                }
+              }}
+              className={`bg-white border rounded-md px-3 py-2 text-xs text-[#111318] focus:outline-none ${formErrors.password ? 'border-red-500 focus:border-red-500' : 'border-[#E4E7EC] focus:border-[#1B4FD8]'}`}
             />
+            {formErrors.password && <p className="text-[10px] text-red-600 font-semibold">{formErrors.password}</p>}
           </div>
 
           {error && (

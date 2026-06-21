@@ -10,13 +10,13 @@ import {
   MapPin, 
   Phone, 
   Send, 
-  LocateFixed, 
   User, 
   Mail, 
   Calendar, 
   Building
 } from 'lucide-react';
 import LocationInput, { LocationData } from '@/components/LocationInput';
+import { validateNepaliPhone, validateEmail, validateRequired } from '@/lib/validation';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -47,6 +47,16 @@ export default function AidDropPage() {
   const [isSubmittingDonor, setIsSubmittingDonor] = useState(false);
   const [donorSuccess, setDonorSuccess] = useState(false);
   const [donorError, setDonorError] = useState<string | null>(null);
+  const [donorFormErrors, setDonorFormErrors] = useState<{
+    name?: string;
+    contact?: string;
+    email?: string;
+    city?: string;
+    address?: string;
+    emergencyContact?: string;
+    dateOfBirth?: string;
+    gender?: string;
+  }>({});
 
   // --- Recipient Search States ---
   const [searchBloodGroup, setSearchBloodGroup] = useState('All');
@@ -81,6 +91,42 @@ export default function AidDropPage() {
     setIsSubmittingDonor(true);
     setDonorSuccess(false);
     setDonorError(null);
+    setDonorFormErrors({});
+
+    // --- Validate ---
+    const newErrors: typeof donorFormErrors = {};
+    if (!validateRequired(donorName)) {
+      newErrors.name = 'Name is required';
+    }
+    if (!validateNepaliPhone(donorContact)) {
+      newErrors.contact = 'Phone must be 98 or 97 followed by 8 digits';
+    }
+    if (!validateRequired(donorEmail)) {
+      newErrors.email = 'Email is required';
+    } else if (!validateEmail(donorEmail)) {
+      newErrors.email = 'Please enter a valid email';
+    }
+    if (!validateRequired(donorCity)) {
+      newErrors.city = 'City is required';
+    }
+    if (!validateRequired(donorAddress)) {
+      newErrors.address = 'Address is required';
+    }
+    if (!validateNepaliPhone(donorEmergencyContact)) {
+      newErrors.emergencyContact = 'Emergency contact must be 98 or 97 followed by 8 digits';
+    }
+    if (!validateRequired(donorDateOfBirth)) {
+      newErrors.dateOfBirth = 'Date of birth is required';
+    }
+    if (!validateRequired(donorGender)) {
+      newErrors.gender = 'Gender is required';
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setDonorFormErrors(newErrors);
+      setIsSubmittingDonor(false);
+      return;
+    }
 
     try {
       const res = await fetch('/api/donors', {
@@ -123,6 +169,7 @@ export default function AidDropPage() {
           latitude: null,
           longitude: null
         });
+        setDonorFormErrors({});
       } else {
         const errData = await res.json();
         throw new Error(errData.error || 'Failed to register');
@@ -201,10 +248,15 @@ export default function AidDropPage() {
                     type="text"
                     placeholder="e.g. Ram Shrestha"
                     value={donorName}
-                    onChange={(e) => setDonorName(e.target.value)}
-                    required
-                    className="bg-white border border-[#E4E7EC] rounded-md px-3 py-2 text-xs text-[#111318] focus:outline-none focus:border-[#1B4FD8]"
+                    onChange={(e) => {
+                      setDonorName(e.target.value);
+                      if (donorFormErrors.name) {
+                        setDonorFormErrors(prev => ({ ...prev, name: undefined }));
+                      }
+                    }}
+                    className={`bg-white border rounded-md px-3 py-2 text-xs text-[#111318] focus:outline-none ${donorFormErrors.name ? 'border-red-500 focus:border-red-500' : 'border-[#E4E7EC] focus:border-[#1B4FD8]'}`}
                   />
+                  {donorFormErrors.name && <p className="text-[10px] text-red-600 font-semibold">{donorFormErrors.name}</p>}
                 </div>
                 <div className="flex flex-col gap-1.5">
                   <label className="text-xs font-bold text-[#111318] flex items-center gap-1">
@@ -214,10 +266,15 @@ export default function AidDropPage() {
                     type="text"
                     placeholder="e.g. 98xxxxxxxx"
                     value={donorContact}
-                    onChange={(e) => setDonorContact(e.target.value)}
-                    required
-                    className="bg-white border border-[#E4E7EC] rounded-md px-3 py-2 text-xs text-[#111318] focus:outline-none focus:border-[#1B4FD8]"
+                    onChange={(e) => {
+                      setDonorContact(e.target.value);
+                      if (donorFormErrors.contact) {
+                        setDonorFormErrors(prev => ({ ...prev, contact: undefined }));
+                      }
+                    }}
+                    className={`bg-white border rounded-md px-3 py-2 text-xs text-[#111318] focus:outline-none ${donorFormErrors.contact ? 'border-red-500 focus:border-red-500' : 'border-[#E4E7EC] focus:border-[#1B4FD8]'}`}
                   />
+                  {donorFormErrors.contact && <p className="text-[10px] text-red-600 font-semibold">{donorFormErrors.contact}</p>}
                 </div>
               </div>
 
@@ -227,7 +284,6 @@ export default function AidDropPage() {
                   <select
                     value={donorBloodGroup}
                     onChange={(e) => setDonorBloodGroup(e.target.value)}
-                    required
                     className="bg-white border border-[#E4E7EC] rounded-md px-3 py-2 text-xs text-[#111318] focus:outline-none focus:border-[#1B4FD8]"
                   >
                     {BLOOD_GROUPS.map((g) => (
@@ -242,10 +298,15 @@ export default function AidDropPage() {
                   <input
                     type="date"
                     value={donorDateOfBirth}
-                    onChange={(e) => setDonorDateOfBirth(e.target.value)}
-                    required
-                    className="bg-white border border-[#E4E7EC] rounded-md px-3 py-2 text-xs text-[#111318] focus:outline-none focus:border-[#1B4FD8]"
+                    onChange={(e) => {
+                      setDonorDateOfBirth(e.target.value);
+                      if (donorFormErrors.dateOfBirth) {
+                        setDonorFormErrors(prev => ({ ...prev, dateOfBirth: undefined }));
+                      }
+                    }}
+                    className={`bg-white border rounded-md px-3 py-2 text-xs text-[#111318] focus:outline-none ${donorFormErrors.dateOfBirth ? 'border-red-500 focus:border-red-500' : 'border-[#E4E7EC] focus:border-[#1B4FD8]'}`}
                   />
+                  {donorFormErrors.dateOfBirth && <p className="text-[10px] text-red-600 font-semibold">{donorFormErrors.dateOfBirth}</p>}
                 </div>
               </div>
 
@@ -254,15 +315,20 @@ export default function AidDropPage() {
                   <label className="text-xs font-bold text-[#111318]">Gender</label>
                   <select
                     value={donorGender}
-                    onChange={(e) => setDonorGender(e.target.value)}
-                    required
-                    className="bg-white border border-[#E4E7EC] rounded-md px-3 py-2 text-xs text-[#111318] focus:outline-none focus:border-[#1B4FD8]"
+                    onChange={(e) => {
+                      setDonorGender(e.target.value);
+                      if (donorFormErrors.gender) {
+                        setDonorFormErrors(prev => ({ ...prev, gender: undefined }));
+                      }
+                    }}
+                    className={`bg-white border rounded-md px-3 py-2 text-xs text-[#111318] focus:outline-none ${donorFormErrors.gender ? 'border-red-500 focus:border-red-500' : 'border-[#E4E7EC] focus:border-[#1B4FD8]'}`}
                   >
                     <option value="">Select</option>
                     {GENDERS.map((g) => (
                       <option key={g} value={g}>{g}</option>
                     ))}
                   </select>
+                  {donorFormErrors.gender && <p className="text-[10px] text-red-600 font-semibold">{donorFormErrors.gender}</p>}
                 </div>
                 <div className="flex flex-col gap-1.5">
                   <label className="text-xs font-bold text-[#111318] flex items-center gap-1">
@@ -272,10 +338,15 @@ export default function AidDropPage() {
                     type="email"
                     placeholder="e.g. ram@example.com"
                     value={donorEmail}
-                    onChange={(e) => setDonorEmail(e.target.value)}
-                    required
-                    className="bg-white border border-[#E4E7EC] rounded-md px-3 py-2 text-xs text-[#111318] focus:outline-none focus:border-[#1B4FD8]"
+                    onChange={(e) => {
+                      setDonorEmail(e.target.value);
+                      if (donorFormErrors.email) {
+                        setDonorFormErrors(prev => ({ ...prev, email: undefined }));
+                      }
+                    }}
+                    className={`bg-white border rounded-md px-3 py-2 text-xs text-[#111318] focus:outline-none ${donorFormErrors.email ? 'border-red-500 focus:border-red-500' : 'border-[#E4E7EC] focus:border-[#1B4FD8]'}`}
                   />
+                  {donorFormErrors.email && <p className="text-[10px] text-red-600 font-semibold">{donorFormErrors.email}</p>}
                 </div>
               </div>
 
@@ -286,10 +357,15 @@ export default function AidDropPage() {
                     type="text"
                     placeholder="e.g. Kathmandu"
                     value={donorCity}
-                    onChange={(e) => setDonorCity(e.target.value)}
-                    required
-                    className="bg-white border border-[#E4E7EC] rounded-md px-3 py-2 text-xs text-[#111318] focus:outline-none focus:border-[#1B4FD8]"
+                    onChange={(e) => {
+                      setDonorCity(e.target.value);
+                      if (donorFormErrors.city) {
+                        setDonorFormErrors(prev => ({ ...prev, city: undefined }));
+                      }
+                    }}
+                    className={`bg-white border rounded-md px-3 py-2 text-xs text-[#111318] focus:outline-none ${donorFormErrors.city ? 'border-red-500 focus:border-red-500' : 'border-[#E4E7EC] focus:border-[#1B4FD8]'}`}
                   />
+                  {donorFormErrors.city && <p className="text-[10px] text-red-600 font-semibold">{donorFormErrors.city}</p>}
                 </div>
                 <div className="flex flex-col gap-1.5">
                   <label className="text-xs font-bold text-[#111318]">Emergency Contact</label>
@@ -297,10 +373,15 @@ export default function AidDropPage() {
                     type="text"
                     placeholder="e.g. 98xxxxxxxx"
                     value={donorEmergencyContact}
-                    onChange={(e) => setDonorEmergencyContact(e.target.value)}
-                    required
-                    className="bg-white border border-[#E4E7EC] rounded-md px-3 py-2 text-xs text-[#111318] focus:outline-none focus:border-[#1B4FD8]"
+                    onChange={(e) => {
+                      setDonorEmergencyContact(e.target.value);
+                      if (donorFormErrors.emergencyContact) {
+                        setDonorFormErrors(prev => ({ ...prev, emergencyContact: undefined }));
+                      }
+                    }}
+                    className={`bg-white border rounded-md px-3 py-2 text-xs text-[#111318] focus:outline-none ${donorFormErrors.emergencyContact ? 'border-red-500 focus:border-red-500' : 'border-[#E4E7EC] focus:border-[#1B4FD8]'}`}
                   />
+                  {donorFormErrors.emergencyContact && <p className="text-[10px] text-red-600 font-semibold">{donorFormErrors.emergencyContact}</p>}
                 </div>
               </div>
 
@@ -310,10 +391,15 @@ export default function AidDropPage() {
                   placeholder="Full address"
                   rows={2}
                   value={donorAddress}
-                  onChange={(e) => setDonorAddress(e.target.value)}
-                  required
-                  className="bg-white border border-[#E4E7EC] rounded-md px-3 py-2 text-xs text-[#111318] focus:outline-none focus:border-[#1B4FD8] resize-none"
+                  onChange={(e) => {
+                    setDonorAddress(e.target.value);
+                    if (donorFormErrors.address) {
+                      setDonorFormErrors(prev => ({ ...prev, address: undefined }));
+                    }
+                  }}
+                  className={`bg-white border rounded-md px-3 py-2 text-xs text-[#111318] focus:outline-none resize-none ${donorFormErrors.address ? 'border-red-500 focus:border-red-500' : 'border-[#E4E7EC] focus:border-[#1B4FD8]'}`}
                 />
+                {donorFormErrors.address && <p className="text-[10px] text-red-600 font-semibold">{donorFormErrors.address}</p>}
               </div>
 
               <div className="flex flex-col gap-1.5">

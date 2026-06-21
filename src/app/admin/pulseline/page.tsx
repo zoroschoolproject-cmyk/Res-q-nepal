@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import useSWR from 'swr';
 import { Phone, Search, Plus, Edit, Trash2, X, MapPin } from 'lucide-react';
+import { validateNepaliPhone, validateRequired } from '@/lib/validation';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -39,6 +40,12 @@ export default function AdminPulseLinePage() {
   const [latitude, setLatitude] = useState('');
   const [longitude, setLongitude] = useState('');
   const [submitLoading, setSubmitLoading] = useState(false);
+  const [formErrors, setFormErrors] = useState<{
+    name?: string;
+    number?: string;
+    district?: string;
+    description?: string;
+  }>({});
 
   const openAddModal = () => {
     setEditContact(null);
@@ -69,6 +76,28 @@ export default function AdminPulseLinePage() {
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitLoading(true);
+    setFormErrors({});
+
+    // --- Validate ---
+    const newErrors: typeof formErrors = {};
+    if (!validateRequired(name)) {
+      newErrors.name = 'Name is required';
+    }
+    if (!validateNepaliPhone(number)) {
+      newErrors.number = 'Phone must be 98 or 97 followed by 8 digits';
+    }
+    if (!validateRequired(district)) {
+      newErrors.district = 'District is required';
+    }
+    if (!validateRequired(description)) {
+      newErrors.description = 'Description is required';
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setFormErrors(newErrors);
+      setSubmitLoading(false);
+      return;
+    }
 
     const payload = { 
       name, 
@@ -93,6 +122,7 @@ export default function AdminPulseLinePage() {
       if (res.ok) {
         mutate();
         setIsModalOpen(false);
+        setFormErrors({});
       } else {
         const errData = await res.json();
         alert(errData.error || 'Failed to submit contact');
@@ -310,10 +340,15 @@ export default function AdminPulseLinePage() {
                   type="text"
                   placeholder="e.g. Kathmandu Police HQ"
                   value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  required
-                  className="bg-white border border-[#E4E7EC] rounded-md px-3 py-1.5 text-xs focus:outline-none"
+                  onChange={(e) => {
+                    setName(e.target.value);
+                    if (formErrors.name) {
+                      setFormErrors(prev => ({ ...prev, name: undefined }));
+                    }
+                  }}
+                  className={`bg-white border rounded-md px-3 py-1.5 text-xs focus:outline-none ${formErrors.name ? 'border-red-500 focus:border-red-500' : 'border-[#E4E7EC]'}`}
                 />
+                {formErrors.name && <p className="text-[10px] text-red-600 font-semibold">{formErrors.name}</p>}
               </div>
 
               <div className="grid grid-cols-2 gap-3">
@@ -321,12 +356,17 @@ export default function AdminPulseLinePage() {
                   <label className="text-[11px] font-bold text-[#111318]">Phone Number</label>
                   <input
                     type="text"
-                    placeholder="e.g. 100, 01-xxxxxx"
+                    placeholder="e.g. 98xxxxxxxx"
                     value={number}
-                    onChange={(e) => setNumber(e.target.value)}
-                    required
-                    className="bg-white border border-[#E4E7EC] rounded-md px-3 py-1.5 text-xs focus:outline-none"
+                    onChange={(e) => {
+                      setNumber(e.target.value);
+                      if (formErrors.number) {
+                        setFormErrors(prev => ({ ...prev, number: undefined }));
+                      }
+                    }}
+                    className={`bg-white border rounded-md px-3 py-1.5 text-xs focus:outline-none ${formErrors.number ? 'border-red-500 focus:border-red-500' : 'border-[#E4E7EC]'}`}
                   />
+                  {formErrors.number && <p className="text-[10px] text-red-600 font-semibold">{formErrors.number}</p>}
                 </div>
                 <div className="flex flex-col gap-1">
                   <label className="text-[11px] font-bold text-[#111318]">Category</label>
@@ -349,8 +389,13 @@ export default function AdminPulseLinePage() {
                   <label className="text-[11px] font-bold text-[#111318]">District</label>
                   <select
                     value={district}
-                    onChange={(e) => setDistrict(e.target.value)}
-                    className="bg-white border border-[#E4E7EC] rounded-md px-3 py-1.5 text-xs focus:outline-none"
+                    onChange={(e) => {
+                      setDistrict(e.target.value);
+                      if (formErrors.district) {
+                        setFormErrors(prev => ({ ...prev, district: undefined }));
+                      }
+                    }}
+                    className={`bg-white border rounded-md px-3 py-1.5 text-xs focus:outline-none ${formErrors.district ? 'border-red-500 focus:border-red-500' : 'border-[#E4E7EC]'}`}
                   >
                     <option value="">Select District</option>
                     {DISTRICTS.filter(d => d !== 'All').map((dist) => (
@@ -359,6 +404,7 @@ export default function AdminPulseLinePage() {
                       </option>
                     ))}
                   </select>
+                  {formErrors.district && <p className="text-[10px] text-red-600 font-semibold">{formErrors.district}</p>}
                 </div>
                 <div className="flex flex-col gap-1">
                   <label className="text-[11px] font-bold text-[#111318]">Location Text</label>
@@ -403,9 +449,15 @@ export default function AdminPulseLinePage() {
                   placeholder="Details regarding availability or location..."
                   rows={3}
                   value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  className="bg-white border border-[#E4E7EC] rounded-md px-3 py-1.5 text-xs focus:outline-none resize-none"
+                  onChange={(e) => {
+                    setDescription(e.target.value);
+                    if (formErrors.description) {
+                      setFormErrors(prev => ({ ...prev, description: undefined }));
+                    }
+                  }}
+                  className={`bg-white border rounded-md px-3 py-1.5 text-xs focus:outline-none resize-none ${formErrors.description ? 'border-red-500 focus:border-red-500' : 'border-[#E4E7EC]'}`}
                 />
+                {formErrors.description && <p className="text-[10px] text-red-600 font-semibold">{formErrors.description}</p>}
               </div>
 
               <button
